@@ -2,6 +2,27 @@
 
 # DEVLOG — 解決方案配置器
 
+## Phase 9: 專案上版 GitHub (2026-06-26)
+
+### 做了什麼
+
+- `git init`（main 分支），建立 `.gitignore` 並推上 GitHub。
+- Repo：<https://github.com/gptt-jacky/Solution-Configurator>
+- 首個 commit：三件套 + DATA_MODEL + doc/（含提示詞 v1–v3、3 份會議 docx）+ ClaudeDesign 原型 + 槍枝照片 + xlsx。
+
+### 刻意排除（.gitignore）
+
+- `XR解決方案成本試算/`：Excel 另存網頁的衍生匯出（51MB，與 xlsx 重複）
+- `.claude/`：本機工具設定
+- Office 暫存 `~$*`、OS 雜物
+
+### 注意
+
+- `XR解決方案成本試算.xlsx` 37MB 已入庫；GitHub >50MB 會警告、單檔上限 100MB。
+  日後 xlsx 繼續變大應改用 Git LFS 或不入庫。
+
+---
+
 ## Phase 8: v2 產出 + v3 優化提示詞 (2026-06-26)
 
 ### 背景
