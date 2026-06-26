@@ -1,0 +1,14 @@
+# Claude Code 本機工具設定
+.claude/
+
+# Excel 另存網頁的衍生匯出（51MB，與 xlsx 重複，不入庫）
+XR解決方案成本試算/
+
+# Office 暫存鎖定檔
+~$*
+
+# OS / 編輯器雜物
+Thumbs.db
+desktop.ini
+.DS_Store
+*.tmp

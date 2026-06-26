@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;}
+  body{margin:0;background:#fff;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
+  ::selection{background:rgba(0,113,227,.16);}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+  .scene-fade{animation:fadeUp .35s ease;}
+</style>
+</helmet>
+<div style="font-family:'Noto Sans TC',-apple-system,'SF Pro','PingFang TC',sans-serif;color:#1d1d1f;min-height:100vh;background:#fff;">
+
+  <!-- ===== Nav ===== -->
+  <div style="position:sticky;top:0;z-index:50;background:rgba(255,255,255,.82);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid #d2d2d7;">
+    <div style="max-width:1180px;margin:0 auto;height:56px;padding:0 28px;display:flex;align-items:center;justify-content:space-between;gap:16px;">
+      <div style="display:flex;align-items:center;gap:10px;min-width:0;">
+        <div style="width:26px;height:26px;border-radius:7px;background:#1d1d1f;display:flex;align-items:center;justify-content:center;flex:none;">
+          <div style="width:11px;height:11px;border-radius:50%;border:2.5px solid #fff;"></div>
+        </div>
+        <span style="font-size:15px;font-weight:700;letter-spacing:.2px;">全球動力科技</span>
+        <span style="font-size:13px;color:#6e6e73;border-left:1px solid #d2d2d7;padding-left:10px;white-space:nowrap;">XR 模擬訓練</span>
+      </div>
+      <span style="font-size:15px;font-weight:500;color:#1d1d1f;">方案配置器</span>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <button onClick="{{ reset }}" style="font-family:inherit;font-size:13px;color:#1d1d1f;background:#fff;border:1px solid #d2d2d7;padding:7px 14px;border-radius:980px;cursor:pointer;transition:all .18s ease;" style-hover="{{ navGhostHover }}">重置</button>
+        <button onClick="{{ exportQuote }}" style="{{ navPrimary }}" style-hover="{{ navPrimaryHover }}">匯出報價</button>
+      </div>
+    </div>
+  </div>
+
+  <div style="max-width:1180px;margin:0 auto;padding:40px 28px 96px;">
+
+    <!-- ===== Header ===== -->
+    <div style="margin-bottom:30px;">
+      <h1 style="font-size:40px;line-height:1.1;font-weight:700;letter-spacing:-.5px;margin:0 0 12px;">打造你的模擬訓練系統</h1>
+      <p style="font-size:17px;line-height:1.5;color:#6e6e73;margin:0;max-width:560px;text-wrap:pretty;">告訴我們場地、要練什麼、有多少人 — 我們即時組出最合適的方案、報價與場域示意圖。</p>
+    </div>
+
+    <!-- ===== Quick templates ===== -->
+    <sc-if value="{{ showTemplates }}" hint-placeholder-val="{{ true }}">
+    <div style="margin-bottom:36px;">
+      <div style="font-size:12px;font-weight:500;letter-spacing:.4px;color:#6e6e73;margin-bottom:12px;">快速套用課程</div>
+      <div style="display:flex;gap:12px;overflow-x:auto;padding-bottom:4px;">
+        <sc-for list="{{ templates }}" as="t" hint-placeholder-count="5">
+          <button onClick="{{ t.onClick }}" style="{{ t.style }}" style-hover="{{ t.styleHover }}">
+            <span style="font-size:14px;font-weight:500;color:#1d1d1f;white-space:nowrap;">{{ t.name }}</span>
+            <span style="font-size:11.5px;color:#6e6e73;white-space:nowrap;">{{ t.meta }}</span>
+          </button>
+        </sc-for>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- ===== Main two-column ===== -->
+    <div style="{{ gridStyle }}">
+
+      <!-- LEFT: visual -->
+      <div>
+        <div style="background:#f5f5f7;border-radius:18px;padding:8px;border:1px solid #e6e6ea;">
+          <div key="{{ sceneKey }}" class="scene-fade" style="border-radius:12px;overflow:hidden;">
+            <svg viewBox="0 0 640 470" width="100%" style="display:block;">
+              <defs>
+                <radialGradient id="vh" cx="50%" cy="42%" r="62%">
+                  <stop offset="0%" stop-color="#ffffff"/>
+                  <stop offset="100%" stop-color="#f0f0f3"/>
+                </radialGradient>
+              </defs>
+              <rect x="0" y="0" width="640" height="470" fill="url(#vh)"/>
+              <ellipse cx="320" cy="300" rx="{{ floor.shadowR }}" ry="{{ floor.shadowRy }}" fill="rgba(0,0,0,.05)"/>
+              <polygon points="{{ floor.points }}" fill="{{ floor.fill }}" stroke="#c7c7cc" stroke-width="1.5"/>
+              <polygon points="{{ floor.inner }}" fill="none" stroke="{{ floor.grid }}" stroke-width="1" stroke-dasharray="4 5"/>
+
+              <!-- truss (OptiTrack) -->
+              <sc-if value="{{ showTruss }}" hint-placeholder-val="{{ false }}">
+                <g opacity="0.92">
+                  <rect x="{{ truss.x }}" y="{{ truss.y }}" width="{{ truss.w }}" height="7" rx="2" fill="#bcbcc2"/>
+                  <rect x="{{ truss.x }}" y="{{ truss.y2 }}" width="{{ truss.w }}" height="2" fill="#9a9aa0"/>
+                  <sc-for list="{{ trussCams }}" as="c" hint-placeholder-count="0">
+                    <g transform="{{ c.t }}"><rect x="-5" y="0" width="10" height="8" rx="2" fill="#6e6e73"/><circle cx="0" cy="4" r="2.4" fill="#1d1d1f"/><circle cx="0" cy="4" r="1" fill="#0a84ff"/></g>
+                  </sc-for>
+                </g>
+              </sc-if>
+
+              <!-- perimeter sensors -->
+              <sc-for list="{{ markers }}" as="m" hint-placeholder-count="0">
+                <g transform="{{ m.t }}" opacity="0.95">
+                  <line x1="0" y1="6" x2="0" y2="22" stroke="#c7c7cc" stroke-width="2"/>
+                  <rect x="-6" y="-4" width="12" height="9" rx="2" fill="#86868b"/>
+                  <circle cx="0" cy="0.5" r="3" fill="#1d1d1f"/>
+                  <circle cx="0" cy="0.5" r="1.3" fill="#0a84ff"/>
+                </g>
+              </sc-for>
+
+              <!-- figures -->
+              <sc-for list="{{ figures }}" as="f" hint-placeholder-count="6">
+                <g transform="{{ f.t }}">
+                  <ellipse cx="0" cy="3" rx="9" ry="2.5" fill="rgba(0,0,0,.07)"/>
+                  <ellipse cx="0" cy="-50" rx="6.5" ry="7" fill="{{ f.fill }}"/>
+                  <path d="M-7,-42 Q0,-46 7,-42 L5,-18 L8,2 L3,2 L1,-16 L-1,-16 L-3,2 L-8,2 L-5,-18 Z" fill="{{ f.fill }}"/>
+                  <sc-if value="{{ f.armed }}" hint-placeholder-val="{{ false }}">
+                    <rect x="3" y="-35" width="23" height="3.2" rx="1.4" fill="#1d1d1f" transform="rotate(-6 3 -35)"/>
+                  </sc-if>
+                </g>
+              </sc-for>
+            </svg>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:16px;padding:0 6px;flex-wrap:wrap;">
+          <span style="width:7px;height:7px;border-radius:50%;background:#0071e3;flex:none;"></span>
+          <span style="font-size:14px;color:#6e6e73;">{{ summary }}</span>
+        </div>
+      </div>
+
+      <!-- RIGHT: config panel (sticky) -->
+      <div style="{{ panelWrapStyle }}">
+        <div style="background:#fff;border:1px solid #e6e6ea;border-radius:18px;padding:26px;box-shadow:0 2px 18px rgba(0,0,0,.05);">
+
+          <!-- (1) scenario -->
+          <div style="margin-bottom:24px;">
+            <div style="font-size:13px;font-weight:700;margin-bottom:12px;">應用情境</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+              <sc-for list="{{ scenarioCards }}" as="s" hint-placeholder-count="2">
+                <button onClick="{{ s.onClick }}" style="{{ s.style }}" style-hover="{{ s.styleHover }}">
+                  <span style="font-size:14.5px;font-weight:500;">{{ s.name }}</span>
+                  <span style="font-size:12px;line-height:1.4;color:#6e6e73;text-wrap:pretty;">{{ s.desc }}</span>
+                </button>
+              </sc-for>
+            </div>
+          </div>
+
+          <!-- (2) weapons -->
+          <div style="margin-bottom:24px;">
+            <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:12px;">
+              <span style="font-size:13px;font-weight:700;">武器與裝備</span>
+              <span style="font-size:11.5px;color:#6e6e73;">可複選 · 已選 {{ weaponCount }}</span>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;">
+              <sc-for list="{{ weaponChips }}" as="w" hint-placeholder-count="6">
+                <button onClick="{{ w.onClick }}" style="{{ w.style }}" style-hover="{{ w.styleHover }}">
+                  <span style="{{ w.dotStyle }}"></span>
+                  <span style="flex:1;text-align:left;line-height:1.25;">{{ w.name }}</span>
+                </button>
+              </sc-for>
+            </div>
+          </div>
+
+          <!-- (3) people -->
+          <div style="margin-bottom:24px;">
+            <div style="font-size:13px;font-weight:700;margin-bottom:12px;">同時受訓人數</div>
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
+              <sc-for list="{{ peopleBtns }}" as="p" hint-placeholder-count="8">
+                <button onClick="{{ p.onClick }}" style="{{ p.style }}" style-hover="{{ p.styleHover }}">{{ p.label }}</button>
+              </sc-for>
+            </div>
+          </div>
+
+          <!-- (4) field -->
+          <div style="margin-bottom:24px;">
+            <div style="font-size:13px;font-weight:700;margin-bottom:12px;">場地大小</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;">
+              <sc-for list="{{ fieldBtns }}" as="g" hint-placeholder-count="4">
+                <button onClick="{{ g.onClick }}" style="{{ g.style }}" style-hover="{{ g.styleHover }}">
+                  <span style="font-size:14px;font-weight:500;">{{ g.name }}</span>
+                  <span style="font-size:11.5px;color:#6e6e73;">{{ g.range }}</span>
+                </button>
+              </sc-for>
+            </div>
+          </div>
+
+          <!-- (5) tracking -->
+          <div style="margin-bottom:22px;">
+            <div style="font-size:13px;font-weight:700;margin-bottom:6px;">追蹤定位方式</div>
+            <div style="font-size:11.5px;color:#6e6e73;margin-bottom:12px;">依場地自動篩選可行方案</div>
+            <div style="display:flex;flex-direction:column;gap:9px;">
+              <sc-for list="{{ trackCards }}" as="t" hint-placeholder-count="3">
+                <button onClick="{{ t.onClick }}" style="{{ t.style }}" style-hover="{{ t.styleHover }}">
+                  <span style="{{ t.radioStyle }}"></span>
+                  <span style="flex:1;text-align:left;">
+                    <span style="display:flex;align-items:center;gap:8px;">
+                      <span style="font-size:14px;font-weight:500;">{{ t.name }}</span>
+                      <span style="{{ t.tagStyle }}">{{ t.tag }}</span>
+                    </span>
+                    <span style="display:block;font-size:12px;color:#6e6e73;margin-top:3px;line-height:1.4;">{{ t.note }}</span>
+                  </span>
+                </button>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="height:1px;background:#e6e6ea;margin:0 -26px 20px;"></div>
+
+          <!-- price -->
+          <div style="margin-bottom:18px;">
+            <div style="font-size:12.5px;color:#6e6e73;margin-bottom:4px;">預估價格</div>
+            <div style="display:flex;align-items:baseline;gap:8px;">
+              <span style="font-size:34px;font-weight:700;letter-spacing:-.5px;line-height:1;">{{ priceText }}</span>
+              <span style="font-size:13px;color:#6e6e73;">{{ priceUnit }}</span>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:10px;">
+            <button onClick="{{ exportQuote }}" style="{{ ctaPrimary }}" style-hover="{{ ctaPrimaryHover }}">匯出報價</button>
+            <button onClick="{{ addToList }}" style="{{ ctaSecondary }}" style-hover="{{ ctaSecondaryHover }}">加入清單</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== Details ===== -->
+    <div style="margin-top:64px;">
+      <h2 style="font-size:13px;font-weight:700;letter-spacing:.4px;color:#6e6e73;text-transform:uppercase;margin:0 0 18px;">方案內容</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px;">
+        <sc-for list="{{ bom }}" as="b" hint-placeholder-count="4">
+          <div style="border:1px solid #e6e6ea;border-radius:14px;padding:18px;background:#fff;transition:all .18s ease;" style-hover="{{ bomHover }}">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+              <span style="width:34px;height:34px;border-radius:9px;background:#f5f5f7;display:flex;align-items:center;justify-content:center;font-size:14px;color:#0071e3;">{{ b.icon }}</span>
+              <span style="font-size:13px;font-weight:700;color:#1d1d1f;">{{ b.qty }}</span>
+            </div>
+            <div style="font-size:14px;font-weight:500;line-height:1.3;margin-bottom:3px;">{{ b.name }}</div>
+            <div style="font-size:12px;color:#6e6e73;line-height:1.4;">{{ b.note }}</div>
+          </div>
+        </sc-for>
+      </div>
+
+      <h2 style="font-size:13px;font-weight:700;letter-spacing:.4px;color:#6e6e73;text-transform:uppercase;margin:44px 0 18px;">規格摘要</h2>
+      <div style="border:1px solid #e6e6ea;border-radius:14px;overflow:hidden;">
+        <sc-for list="{{ specs }}" as="s" hint-placeholder-count="5">
+          <div style="{{ s.rowStyle }}">
+            <span style="font-size:13.5px;color:#6e6e73;">{{ s.k }}</span>
+            <span style="font-size:13.5px;font-weight:500;text-align:right;">{{ s.v }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+
+  <!-- toast -->
+  <sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;left:50%;bottom:32px;transform:translateX(-50%);background:#1d1d1f;color:#fff;font-size:13.5px;padding:12px 20px;border-radius:980px;box-shadow:0 8px 30px rgba(0,0,0,.22);z-index:80;">{{ toast }}</div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1200,&quot;height&quot;:920},&quot;accentColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#0071e3&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;showQuickTemplates&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;},&quot;currencyPrefix&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;NT$&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  state = {
+    scenario: 'police',
+    weapons: ['手槍', '步槍'],
+    people: 6,
+    field: 'medium',
+    tracking: 'antilatency',
+    toast: '',
+  };
+
+  // ---------- static data ----------
+  weaponsData = [
+    { id: '手槍', name: '手槍（電動/瓦斯）', price: 80000, sc: ['police', 'military'] },
+    { id: '步槍', name: '步槍', price: 100000, sc: ['police', 'military'] },
+    { id: '警棍', name: '警棍', price: 50000, sc: ['police'] },
+    { id: '電擊槍', name: '電擊槍', price: 60000, sc: ['police'] },
+    { id: '辣椒水罐', name: '辣椒水罐', price: 40000, sc: ['police'] },
+    { id: '衝鋒槍', name: '衝鋒槍', price: 100000, sc: ['military'] },
+    { id: '機槍', name: '機槍', price: 150000, sc: ['military'] },
+    { id: '狙擊槍', name: '狙擊槍', price: 120000, sc: ['military'] },
+    { id: '榴彈槍', name: '榴彈槍', price: 150000, sc: ['military'] },
+    { id: '飛彈/火箭', name: '飛彈/火箭發射器', price: 300000, sc: ['military'] },
+    { id: '無人機', name: '無人機', price: 200000, sc: ['military'] },
+    { id: '悍馬車', name: '載具 · 悍馬車', price: 500000, sc: ['military'] },
+    { id: '快艇', name: '載具 · 快艇', price: 500000, sc: ['military'] },
+    { id: '戰車', name: '載具 · 戰車', price: 500000, sc: ['military'] },
+  ];
+
+  trackingData = [
+    { id: 'antilatency', name: 'Antilatency', fields: ['small', 'medium', 'large', 'xlarge'], build: '需施工', perPerson: 60000, base: 200000, benefit: '大場域可擴展、抗遮擋' },
+    { id: 'optitrack', name: 'OptiTrack', fields: ['large', 'xlarge'], build: '需施工', perPerson: 150000, base: 800000, benefit: '精度最高、適合大場域' },
+    { id: 'ultimate', name: 'Ultimate Tracker', fields: ['small', 'medium'], build: '免施工', perPerson: 50000, base: 0, benefit: '免布置、可攜、快速部署' },
+    { id: 'wrist', name: 'Wrist Tracker', fields: ['small', 'medium'], build: '免施工', perPerson: 45000, base: 0, benefit: '免布置、輕便' },
+    { id: 'sensoryx', name: 'Sensoryx', fields: ['small', 'medium'], build: '免施工', perPerson: 55000, base: 0, benefit: '體積更小、免布置' },
+    { id: 'vive', name: 'Vive Tracker', fields: ['small'], build: '需基站', perPerson: 40000, base: 100000, benefit: '平價高精度、適合小空間' },
+  ];
+
+  fieldsData = [
+    { id: 'small', name: '小型', range: '< 36 ㎡', rep: 25 },
+    { id: 'medium', name: '中型', range: '36–81 ㎡', rep: 60 },
+    { id: 'large', name: '大型', range: '81–300 ㎡', rep: 180 },
+    { id: 'xlarge', name: '超大型', range: '> 300 ㎡', rep: 500 },
+  ];
+
+  scenariosData = [
+    { id: 'police', name: '警勤模擬', desc: '射擊、警用裝備與多元情境的多人協同訓練' },
+    { id: 'military', name: '軍事模擬', desc: 'AI 合成化戰場：武器操作、載具駕駛與 CQB' },
+  ];
+
+  peopleOptions = [1, 2, 4, 6, 8, 12, 16, 24];
+  HELMET = 30000;
+
+  templatesData = [
+    { name: '單兵射擊模擬教室', scenario: 'police', people: 6, field: 'medium', weapons: ['手槍', '步槍'], tracking: 'antilatency' },
+    { name: '警勤綜合應對', scenario: 'police', people: 4, field: 'small', weapons: ['手槍', '警棍', '電擊槍', '辣椒水罐'], tracking: 'ultimate' },
+    { name: '陣地防衛', scenario: 'military', people: 2, field: 'medium', weapons: ['步槍'], tracking: 'antilatency' },
+    { name: '單兵戰場情境', scenario: 'military', people: 8, field: 'large', weapons: ['步槍', '機槍'], tracking: 'antilatency' },
+    { name: '抗壓館全身訓練', scenario: 'military', people: 8, field: 'xlarge', weapons: ['步槍', '手槍'], tracking: 'antilatency' },
+    { name: '載具駕駛訓練', scenario: 'military', people: 16, field: 'xlarge', weapons: ['悍馬車', '快艇'], tracking: 'antilatency' },
+  ];
+
+  // ---------- helpers ----------
+  fmt(n) { return n.toLocaleString('en-US'); }
+  get BLUE() { return this.props.accentColor || '#0071e3'; }
+
+  disabledReason(t) {
+    if (t.id === 'optitrack') return '需大型以上場地';
+    if (t.id === 'vive') return '僅適用小型場地';
+    return '不適用大型場地';
+  }
+
+  firstAvailable(field) {
+    const a = this.trackingData.find(t => t.fields.includes(field));
+    return a ? a.id : 'antilatency';
+  }
+
+  setScenario(id) {
+    if (id === this.state.scenario) return;
+    const valid = this.weaponsData.filter(w => w.sc.includes(id)).map(w => w.id);
+    this.setState({ scenario: id, weapons: this.state.weapons.filter(w => valid.includes(w)) });
+  }
+  toggleWeapon(id) {
+    const w = this.state.weapons;
+    this.setState({ weapons: w.includes(id) ? w.filter(x => x !== id) : [...w, id] });
+  }
+  setField(id) {
+    const cur = this.trackingData.find(t => t.id === this.state.tracking);
+    const ok = cur && cur.fields.includes(id);
+    this.setState({ field: id, tracking: ok ? this.state.tracking : this.firstAvailable(id) });
+  }
+  applyTemplate(t) {
+    this.setState({ scenario: t.scenario, people: t.people, field: t.field, weapons: [...t.weapons], tracking: t.tracking });
+  }
+  reset = () => this.setState({ scenario: 'police', weapons: ['手槍', '步槍'], people: 6, field: 'medium', tracking: 'antilatency' });
+
+  showToast(msg) {
+    this.setState({ toast: msg });
+    clearTimeout(this._tt);
+    this._tt = setTimeout(() => this.setState({ toast: '' }), 2200);
+  }
+
+  renderVals() {
+    const BLUE = this.BLUE;
+    const SELBG = '#f0f7ff', LINE = '#d2d2d7', SUB = '#6e6e73', TEXT = '#1d1d1f', BG2 = '#f5f5f7';
+    const { scenario, weapons, people, field, tracking } = this.state;
+    const fieldObj = this.fieldsData.find(f => f.id === field);
+    const trackObj = this.trackingData.find(t => t.id === tracking) || this.trackingData[0];
+    const needsBuild = trackObj.build !== '免施工';
+    const selWeapons = this.weaponsData.filter(w => weapons.includes(w.id));
+
+    // ---- pricing ----
+    const weaponSum = selWeapons.reduce((s, w) => s + w.price, 0);
+    const total = (this.HELMET + trackObj.perPerson) * people + trackObj.base + weaponSum;
+
+    // ---- style factories ----
+    const trans = 'all .18s ease';
+    const segBase = (sel, extra) => Object.assign({
+      fontFamily: 'inherit', cursor: 'pointer', transition: trans, borderRadius: '10px',
+      border: '1px solid ' + LINE, background: '#fff', color: TEXT,
+    }, sel ? { border: '1.5px solid ' + BLUE, background: SELBG, color: BLUE } : {}, extra || {});
+    const segHover = (sel) => sel ? { background: '#e7f1ff' } : { background: BG2, borderColor: '#b5b5bb' };
+
+    // scenario cards
+    const scenarioCards = this.scenariosData.map(s => {
+      const sel = s.id === scenario;
+      return {
+        name: s.name, desc: s.desc, onClick: () => this.setScenario(s.id),
+        style: segBase(sel, { display: 'flex', flexDirection: 'column', gap: '4px', alignItems: 'flex-start', textAlign: 'left', padding: '14px', borderRadius: '12px' }),
+        styleHover: segHover(sel),
+      };
+    });
+
+    // weapon chips
+    const weaponChips = this.weaponsData.filter(w => w.sc.includes(scenario)).map(w => {
+      const sel = weapons.includes(w.id);
+      return {
+        name: w.name, onClick: () => this.toggleWeapon(w.id),
+        style: segBase(sel, { display: 'flex', alignItems: 'center', gap: '9px', padding: '11px 12px', fontSize: '13.5px', fontWeight: sel ? 500 : 400 }),
+        styleHover: segHover(sel),
+        dotStyle: { width: '15px', height: '15px', borderRadius: '5px', flex: 'none', display: 'inline-block', border: sel ? 'none' : '1.5px solid ' + LINE, background: sel ? BLUE : '#fff', boxShadow: sel ? 'inset 0 0 0 2px #fff, inset 0 0 0 3.5px ' + BLUE : 'none' },
+      };
+    });
+
+    // people buttons
+    const peopleBtns = this.peopleOptions.map(n => {
+      const sel = n === people;
+      return {
+        label: String(n), onClick: () => this.setState({ people: n }),
+        style: Object.assign({ fontFamily: 'inherit', cursor: 'pointer', transition: trans, padding: '10px 0', borderRadius: '10px', fontSize: '14px', fontWeight: 500, textAlign: 'center' },
+          sel ? { background: BLUE, color: '#fff', border: '1px solid ' + BLUE } : { background: '#fff', color: TEXT, border: '1px solid ' + LINE }),
+        styleHover: sel ? { background: '#0077ed' } : { background: BG2, borderColor: '#b5b5bb' },
+      };
+    });
+
+    // field buttons
+    const fieldBtns = this.fieldsData.map(f => {
+      const sel = f.id === field;
+      return {
+        name: f.name, range: f.range, onClick: () => this.setField(f.id),
+        style: segBase(sel, { display: 'flex', flexDirection: 'column', gap: '2px', alignItems: 'flex-start', textAlign: 'left', padding: '12px 14px' }),
+        styleHover: segHover(sel),
+      };
+    });
+
+    // tracking cards
+    const trackCards = this.trackingData.map(t => {
+      const avail = t.fields.includes(field);
+      const sel = t.id === tracking && avail;
+      const tagColor = t.build === '免施工' ? '#1f8a4c' : '#9a6a00';
+      const tagBg = t.build === '免施工' ? '#e7f6ec' : '#fbf0d9';
+      return {
+        name: t.name, tag: avail ? t.build : '無法使用',
+        note: avail ? t.benefit : this.disabledReason(t),
+        onClick: avail ? () => this.setState({ tracking: t.id }) : null,
+        style: Object.assign({
+          fontFamily: 'inherit', display: 'flex', alignItems: 'flex-start', gap: '11px', padding: '13px 14px', borderRadius: '12px', transition: trans, textAlign: 'left', width: '100%',
+        }, avail
+          ? { cursor: 'pointer', border: sel ? '1.5px solid ' + BLUE : '1px solid ' + LINE, background: sel ? SELBG : '#fff', opacity: 1 }
+          : { cursor: 'not-allowed', border: '1px solid #ececef', background: BG2, opacity: 1 }),
+        styleHover: avail ? (sel ? { background: '#e7f1ff' } : { background: BG2, borderColor: '#b5b5bb' }) : {},
+        radioStyle: { width: '17px', height: '17px', borderRadius: '50%', flex: 'none', marginTop: '1px', border: sel ? '5px solid ' + BLUE : '1.5px solid ' + (avail ? LINE : '#d8d8dc'), background: '#fff', boxSizing: 'border-box' },
+        tagStyle: { fontSize: '10.5px', fontWeight: 500, padding: '2px 7px', borderRadius: '6px', color: avail ? tagColor : '#a1a1a6', background: avail ? tagBg : '#ececef', whiteSpace: 'nowrap' },
+      };
+    });
+
+    // templates
+    const tName = (id) => this.fieldsData.find(f => f.id === id).name;
+    const templates = this.templatesData.map(t => ({
+      name: t.name,
+      meta: (t.scenario === 'police' ? '警勤' : '軍事') + ' · ' + t.people + ' 人 · ' + tName(t.field),
+      onClick: () => this.applyTemplate(t),
+      style: { fontFamily: 'inherit', cursor: 'pointer', transition: trans, display: 'flex', flexDirection: 'column', gap: '3px', alignItems: 'flex-start', padding: '13px 16px', borderRadius: '12px', border: '1px solid ' + LINE, background: '#fff', flex: 'none' },
+      styleHover: { background: BG2, borderColor: '#b5b5bb', transform: 'translateY(-1px)' },
+    }));
+
+    // ---- BOM ----
+    const bom = [
+      { icon: '⛑', name: 'Focus Vision 頭盔', qty: '× ' + people, note: '每位受訓人員配戴' },
+      { icon: '◎', name: trackObj.name + ' 定位設備', qty: '× ' + people, note: '每人一組追蹤配置' },
+    ];
+    if (needsBuild) bom.push({ icon: '⚒', name: '場域施工建置', qty: '× 1', note: trackObj.build + '（' + fieldObj.name + '場地）' });
+    selWeapons.forEach(w => bom.push({ icon: '◆', name: w.name, qty: '× 1', note: '武器開發製作 · NT$ ' + this.fmt(w.price) }));
+
+    // ---- specs ----
+    const specRows = [
+      ['場地級距', fieldObj.name + '（' + fieldObj.range + '，代表 ' + fieldObj.rep + ' ㎡）'],
+      ['同時受訓人數', people + ' 人'],
+      ['定位方式', trackObj.name],
+      ['是否需施工', needsBuild ? trackObj.build : '免施工'],
+      ['武器配置', selWeapons.length ? selWeapons.map(w => w.name).join('、') : '尚未選擇'],
+    ];
+    const specs = specRows.map((r, i) => ({
+      k: r[0], v: r[1],
+      rowStyle: { display: 'flex', justifyContent: 'space-between', gap: '20px', alignItems: 'center', padding: '14px 18px', background: i % 2 ? '#fafafb' : '#fff', borderTop: i ? '1px solid #ececef' : 'none' },
+    }));
+
+    // ---- SVG scene geometry ----
+    const cx = 320, cy = 255, baseW = 200, baseD = 100;
+    const s = Math.max(0.5, Math.min(1.22, Math.sqrt(fieldObj.rep / 180)));
+    const w = baseW * s, d = baseD * s;
+    const pt = (x, y) => x.toFixed(1) + ',' + y.toFixed(1);
+    const floorPoints = [pt(cx, cy - d), pt(cx + w, cy), pt(cx, cy + d), pt(cx - w, cy)].join(' ');
+    const iw = w * 0.78, id = d * 0.78;
+    const innerPoints = [pt(cx, cy - id), pt(cx + iw, cy), pt(cx, cy + id), pt(cx - iw, cy)].join(' ');
+
+    const figFill = scenario === 'police' ? '#3a4a63' : '#4d5238';
+    const floorFill = scenario === 'police' ? '#eef1f6' : '#f0f1ea';
+    const gridCol = scenario === 'police' ? '#cdd5e0' : '#d4d6c4';
+    const armed = weapons.length > 0;
+
+    const count = Math.min(people, 24);
+    const cols = Math.ceil(Math.sqrt(count));
+    const rows = Math.ceil(count / cols);
+    const figures = [];
+    for (let i = 0; i < count; i++) {
+      const r = Math.floor(i / cols), c = i % cols;
+      const a = cols > 1 ? (c / (cols - 1) - 0.5) * 1.05 : 0;
+      const b = rows > 1 ? (r / (rows - 1) - 0.5) * 1.05 : 0;
+      const sx = cx + (a - b) * w * 0.5;
+      const sy = cy + (a + b) * d * 0.5;
+      const depthT = (sy - (cy - d)) / (2 * d);
+      const fs = 0.34 + depthT * 0.18;
+      figures.push({ sy, fill: figFill, armed, t: 'translate(' + sx.toFixed(1) + ',' + sy.toFixed(1) + ') scale(' + fs.toFixed(3) + ')' });
+    }
+    figures.sort((p, q) => p.sy - q.sy);
+
+    // markers
+    const left = [cx - w, cy], top = [cx, cy - d], right = [cx + w, cy];
+    const lerp = (p, q, tt) => [p[0] + (q[0] - p[0]) * tt, p[1] + (q[1] - p[1]) * tt];
+    const markers = [];
+    if (needsBuild) {
+      if (trackObj.id === 'vive') {
+        [left, right].forEach(p => markers.push({ t: 'translate(' + (p[0]).toFixed(1) + ',' + (p[1] - 16).toFixed(1) + ')' }));
+      } else {
+        [0.28, 0.62, 0.92].forEach(tt => {
+          const a1 = lerp(left, top, tt), a2 = lerp(top, right, tt);
+          markers.push({ t: 'translate(' + a1[0].toFixed(1) + ',' + (a1[1] - 14).toFixed(1) + ')' });
+          markers.push({ t: 'translate(' + a2[0].toFixed(1) + ',' + (a2[1] - 14).toFixed(1) + ')' });
+        });
+      }
+    }
+
+    // truss
+    const showTruss = trackObj.id === 'optitrack';
+    const truss = { x: cx - w * 0.82, y: cy - d - 46, y2: cy - d - 41, w: w * 1.64 };
+    const trussCams = [];
+    if (showTruss) {
+      for (let k = 0; k < 5; k++) {
+        const x = truss.x + (truss.w / 4) * k;
+        trussCams.push({ t: 'translate(' + x.toFixed(1) + ',' + (truss.y + 6).toFixed(1) + ')' });
+      }
+    }
+
+    const summary = (scenario === 'police' ? '警勤模擬' : '軍事模擬') + '　·　' + people + ' 人　·　' + fieldObj.name + '場地 (' + fieldObj.rep + '㎡)　·　' + trackObj.name;
+
+    // ---- chrome styles ----
+    const navPrimary = { fontFamily: 'inherit', fontSize: '13px', color: '#fff', background: BLUE, border: '1px solid ' + BLUE, padding: '7px 15px', borderRadius: '980px', cursor: 'pointer', transition: trans, fontWeight: 500 };
+    const ctaP = { fontFamily: 'inherit', flex: 1, fontSize: '15px', fontWeight: 500, color: '#fff', background: BLUE, border: '1px solid ' + BLUE, padding: '13px', borderRadius: '12px', cursor: 'pointer', transition: trans };
+    const ctaS = { fontFamily: 'inherit', flex: 1, fontSize: '15px', fontWeight: 500, color: TEXT, background: '#fff', border: '1px solid ' + LINE, padding: '13px', borderRadius: '12px', cursor: 'pointer', transition: trans };
+
+    return {
+      showTemplates: this.props.showQuickTemplates !== false,
+      templates, scenarioCards, weaponChips, peopleBtns, fieldBtns, trackCards,
+      weaponCount: selWeapons.length + ' 項',
+      bom, specs,
+      priceText: 'NT$ ' + this.fmt(total),
+      priceUnit: (this.props.currencyPrefix || 'NT$') + '（含稅前 · 預估）',
+      summary, sceneKey: scenario + '-' + field + '-' + people + '-' + tracking + '-' + weapons.join(','),
+      floor: { points: floorPoints, inner: innerPoints, fill: floorFill, grid: gridCol, shadowR: (w * 0.92).toFixed(1), shadowRy: (d * 0.82).toFixed(1) },
+      figures, markers, showTruss, truss, trussCams,
+      toast: this.state.toast,
+      gridStyle: { display: 'grid', gridTemplateColumns: 'minmax(0,1.35fr) minmax(0,1fr)', gap: '40px', alignItems: 'start' },
+      panelWrapStyle: { position: 'sticky', top: '80px' },
+      reset: this.reset,
+      exportQuote: () => this.showToast('已產生報價文件（示意）— ' + this.fmt(total) + ' 元'),
+      addToList: () => this.showToast('已加入方案清單'),
+      navGhostHover: { background: BG2, borderColor: '#b5b5bb' },
+      navPrimary, navPrimaryHover: { background: '#0077ed' },
+      ctaPrimary: ctaP, ctaPrimaryHover: { background: '#0077ed' },
+      ctaSecondary: ctaS, ctaSecondaryHover: { background: BG2, borderColor: '#b5b5bb' },
+      bomHover: { borderColor: '#c7c7cc', boxShadow: '0 4px 16px rgba(0,0,0,.06)', transform: 'translateY(-1px)' },
+    };
+  }
+}
+</script>
+</body>
+</html>
