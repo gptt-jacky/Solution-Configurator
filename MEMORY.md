@@ -24,6 +24,14 @@
 - **設計**：之後用 Claude Design 產生，需對齊官網科技感／極簡專業風格
 - **需求細節**：見 `doc/需求_會議紀要.md`
 
+## 部署
+
+- **線上網址（GitHub Pages）**：<https://gptt-jacky.github.io/Solution-Configurator/>
+- 來源：repo `Solution-Configurator`，Pages = main `/docs`。
+- `docs/` = 靜態站（index.html + support.js + assets/，三項同層、相對路徑）。
+- 更新流程：Claude Design 編輯 → 下載打包 → 覆蓋 `docs/` 三項 → commit/push 自動更新。
+- 原始打包檔 `Claude Design打包檔/` 已 gitignore（內容已複製到 docs/）。
+
 ## 關鍵檔案
 
 - `XR解決方案成本試算.xlsx`：核心資料來源（46 張表）

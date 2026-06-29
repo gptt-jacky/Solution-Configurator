@@ -2,6 +2,25 @@
 
 # DEVLOG — 解決方案配置器
 
+## Phase 13: GitHub Pages 上線 (2026-06-29)
+
+### 做了什麼
+
+- 取得 Claude Design 完整打包檔（index.html + support.js + assets/）。
+- 複製到 repo `docs/`，commit/push；Pages 設 main `/docs`。
+- 原始打包檔加入 .gitignore。
+
+### 結果
+
+- **線上**：<https://gptt-jacky.github.io/Solution-Configurator/>
+- 探測主頁 / support.js / assets 圖片皆回 **200**，無缺檔。
+
+### 更新流程（記錄）
+
+- Claude Design 編輯 → 下載打包 → 覆蓋 `docs/` 三項（index.html/support.js/assets/）→ commit/push。
+
+---
+
 ## Phase 12: v6 提示詞 — 定位改現場條件自動最優解 (2026-06-29)
 
 ### 背景
