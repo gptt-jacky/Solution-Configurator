@@ -4,6 +4,9 @@
 # Excel 另存網頁的衍生匯出（51MB，與 xlsx 重複，不入庫）
 XR解決方案成本試算/
 
+# Claude Design 原始下載打包檔（已複製到 docs/ 供 Pages 用，原檔不入庫）
+Claude Design打包檔/
+
 # Office 暫存鎖定檔
 ~$*
 

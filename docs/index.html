@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;}
+  body{margin:0;background:#fff;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
+  ::selection{background:rgba(0,113,227,.16);}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+  .scene-fade{animation:fadeUp .4s ease;}
+  .cfg-grid{display:grid;grid-template-columns:minmax(0,1.26fr) minmax(0,1fr);gap:34px;align-items:start;}
+  .cfg-frozen{position:sticky;top:78px;align-self:start;}
+  .noscroll::-webkit-scrollbar{height:6px;}
+  .noscroll::-webkit-scrollbar-thumb{background:#d2d2d7;border-radius:8px;}
+  @media(max-width:940px){
+    .cfg-grid{grid-template-columns:minmax(0,1fr);gap:24px;}
+    .cfg-frozen{position:static;}
+  }
+</style>
+</helmet>
+<template id="__bundler_thumbnail">
+  <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="22" fill="#0071e3"/>
+    <rect x="30" y="30" width="40" height="40" rx="13" fill="#ffffff"/>
+    <circle cx="50" cy="50" r="9" fill="none" stroke="#0071e3" stroke-width="4"/>
+  </svg>
+</template>
+<div style="font-family:-apple-system,'SF Pro Display','SF Pro Text','PingFang TC','Noto Sans TC',sans-serif;color:#1d1d1f;min-height:100vh;background:#fff;">
+
+  <!-- ===== Top full-width price bar (frozen) ===== -->
+  <div style="position:sticky;top:0;z-index:60;background:rgba(255,255,255,.85);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid #d2d2d7;">
+    <div style="max-width:1280px;margin:0 auto;min-height:62px;padding:9px 28px;display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;">
+      <div style="display:flex;align-items:center;gap:11px;min-width:0;">
+        <img src="assets/logo-r.png" alt="logo" style="height:30px;width:auto;display:block;flex:none;"/>
+        <span style="font-size:15px;font-weight:700;letter-spacing:.2px;">全球動力科技</span>
+        <span style="font-size:13px;color:#6e6e73;border-left:1px solid #d2d2d7;padding-left:11px;white-space:nowrap;">XR 模擬訓練 · 方案配置器</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px;">
+        <div style="text-align:right;line-height:1;">
+          <div style="font-size:11px;color:#6e6e73;margin-bottom:3px;">預估價格</div>
+          <div style="font-size:28px;font-weight:700;letter-spacing:-.5px;color:#0071e3;">{{ priceText }}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <button onClick="{{ exportQuote }}" style="{{ ctaPrimary }}" style-hover="{{ ctaPrimaryHover }}">匯出報價</button>
+          <button onClick="{{ addToList }}" style="{{ ctaSecondary }}" style-hover="{{ ctaSecondaryHover }}">加入清單</button>
+          <button onClick="{{ reset }}" style="{{ ghostBtn }}" style-hover="{{ navGhostHover }}">重置</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="max-width:1280px;margin:0 auto;padding:30px 28px 96px;">
+
+    <!-- ===== Two columns: LEFT frozen / RIGHT scroll ===== -->
+    <div class="cfg-grid">
+
+      <!-- ============ LEFT (frozen) ============ -->
+      <div class="cfg-frozen">
+
+        <!-- ★ Weapon carousel -->
+        <div style="background:#f5f5f7;border-radius:34px;padding:20px;border:1px solid #ececf0;margin-bottom:22px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;padding:0 4px;">
+            <span style="font-size:12px;font-weight:500;letter-spacing:.5px;color:#6e6e73;">武器展示</span>
+            <span style="font-size:12px;color:#6e6e73;">已選 {{ weaponCount }}</span>
+          </div>
+
+          <div style="position:relative;height:300px;overflow:hidden;border-radius:24px;user-select:none;touch-action:pan-y;" onPointerDown="{{ onDragStart }}">
+            <sc-if value="{{ carouselEmpty }}" hint-placeholder-val="{{ false }}">
+              <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:#a1a1a6;">
+                <div style="width:116px;height:76px;border-radius:20px;border:2px dashed #cfcfd4;display:flex;align-items:center;justify-content:center;font-size:30px;">＋</div>
+                <span style="font-size:14px;">從右側選擇武器與裝備</span>
+              </div>
+            </sc-if>
+
+            <sc-for list="{{ carouselCards }}" as="c" hint-placeholder-count="0">
+              <div style="{{ c.wrap }}" style-hover="{{ c.wrapHover }}" onClick="{{ c.onClick }}">
+                <sc-if value="{{ c.img }}" hint-placeholder-val="{{ false }}">
+                  <div style="{{ c.imgStyle }}"></div>
+                </sc-if>
+                <sc-if value="{{ c.placeholder }}" hint-placeholder-val="{{ false }}">
+                  <div style="width:100%;height:100%;border-radius:18px;background:repeating-linear-gradient(135deg,#fff,#fff 8px,#f1f1f4 8px,#f1f1f4 16px);border:1px solid #e2e2e7;display:flex;align-items:center;justify-content:center;">
+                    <span style="font:500 12px ui-monospace,monospace;color:#9a9aa0;text-align:center;padding:0 10px;">{{ c.name }}<br/>產品照</span>
+                  </div>
+                </sc-if>
+              </div>
+            </sc-for>
+
+            <sc-if value="{{ showArrows }}" hint-placeholder-val="{{ false }}">
+              <button onClick="{{ prev }}" style="{{ arrowL }}" style-hover="{{ arrowHover }}">‹</button>
+              <button onClick="{{ next }}" style="{{ arrowR }}" style-hover="{{ arrowHover }}">›</button>
+            </sc-if>
+          </div>
+
+          <sc-if value="{{ centerWeapon }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;align-items:center;justify-content:center;gap:14px;margin-top:10px;min-height:30px;">
+              <div style="text-align:right;">
+                <div style="font-size:17px;font-weight:600;line-height:1.2;">{{ centerName }}</div>
+                <div style="font-size:12.5px;color:#6e6e73;">開發製作費 {{ centerFee }}</div>
+              </div>
+              <button onClick="{{ removeCenter }}" style="{{ removeBtn }}" style-hover="{{ removeBtnHover }}">移除</button>
+            </div>
+          </sc-if>
+        </div>
+
+        <!-- Scene diagram -->
+        <div style="background:#fff;border:1px solid #ececf0;border-radius:28px;padding:8px;">
+          <div key="{{ sceneKey }}" class="scene-fade" style="border-radius:22px;overflow:hidden;">
+            <svg viewBox="0 0 680 400" preserveAspectRatio="xMidYMid slice" style="display:block;width:100%;height:360px;">
+              <defs>
+                <radialGradient id="vh3" cx="50%" cy="40%" r="65%">
+                  <stop offset="0%" stop-color="{{ scene.bgIn }}"/>
+                  <stop offset="100%" stop-color="{{ scene.bgOut }}"/>
+                </radialGradient>
+              </defs>
+              <rect x="0" y="0" width="680" height="400" fill="url(#vh3)"/>
+              <ellipse cx="340" cy="262" rx="{{ floor.shadowR }}" ry="{{ floor.shadowRy }}" fill="rgba(0,0,0,.05)"/>
+              <polygon points="{{ floor.points }}" fill="{{ floor.fill }}" stroke="#c7c7cc" stroke-width="1.5"/>
+              <polygon points="{{ floor.inner }}" fill="none" stroke="{{ floor.grid }}" stroke-width="1" stroke-dasharray="4 6"/>
+
+              <sc-for list="{{ floorDots }}" as="dt" hint-placeholder-count="0">
+                <circle cx="{{ dt.x }}" cy="{{ dt.y }}" r="3.4" fill="{{ scene.accent }}" opacity="0.9"/>
+                <circle cx="{{ dt.x }}" cy="{{ dt.y }}" r="6.5" fill="{{ scene.accent }}" opacity="0.18"/>
+              </sc-for>
+
+              <sc-if value="{{ showTruss }}" hint-placeholder-val="{{ false }}">
+                <g opacity="0.92">
+                  <rect x="{{ truss.x }}" y="{{ truss.y }}" width="{{ truss.w }}" height="7" rx="3" fill="#bcbcc2"/>
+                  <rect x="{{ truss.x }}" y="{{ truss.y2 }}" width="{{ truss.w }}" height="2" fill="#9a9aa0"/>
+                  <sc-for list="{{ trussCams }}" as="tc" hint-placeholder-count="0">
+                    <g transform="{{ tc.t }}"><rect x="-5" y="0" width="10" height="8" rx="2" fill="#6e6e73"/><circle cx="0" cy="4" r="2.4" fill="#1d1d1f"/><circle cx="0" cy="4" r="1" fill="#0a84ff"/></g>
+                  </sc-for>
+                </g>
+              </sc-if>
+
+              <sc-for list="{{ corners }}" as="cn" hint-placeholder-count="0">
+                <g transform="{{ cn.t }}">
+                  <line x1="0" y1="2" x2="0" y2="26" stroke="#c7c7cc" stroke-width="2"/>
+                  <rect x="-7" y="-9" width="14" height="12" rx="3" fill="#48484a"/>
+                  <circle cx="0" cy="-3" r="2.6" fill="#0a84ff"/>
+                </g>
+              </sc-for>
+
+              <sc-for list="{{ figures }}" as="f" hint-placeholder-count="8">
+                <g transform="{{ f.t }}">
+                  <ellipse cx="0" cy="3" rx="9" ry="2.5" fill="rgba(0,0,0,.07)"/>
+                  <ellipse cx="0" cy="-50" rx="6.5" ry="7" fill="{{ f.fill }}"/>
+                  <path d="M-7,-42 Q0,-46 7,-42 L5,-18 L8,2 L3,2 L1,-16 L-1,-16 L-3,2 L-8,2 L-5,-18 Z" fill="{{ f.fill }}"/>
+                  <sc-if value="{{ f.armed }}" hint-placeholder-val="{{ false }}">
+                    <rect x="3" y="-35" width="23" height="3.2" rx="1.4" fill="#1d1d1f" transform="rotate(-6 3 -35)"/>
+                  </sc-if>
+                </g>
+              </sc-for>
+
+              <sc-if value="{{ overflowText }}" hint-placeholder-val="{{ false }}">
+                <text x="340" y="360" text-anchor="middle" font-family="'PingFang TC','Noto Sans TC',sans-serif" font-size="13" fill="#6e6e73">{{ overflowText }}</text>
+              </sc-if>
+            </svg>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;padding:12px 12px 6px;flex-wrap:wrap;">
+            <span style="width:8px;height:8px;border-radius:50%;flex:none;background:{{ scene.accent }};"></span>
+            <span style="font-size:14px;color:#6e6e73;">{{ summary }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ RIGHT (scrolling menu) ============ -->
+      <div>
+        <!-- quick templates -->
+        <sc-if value="{{ showTemplates }}" hint-placeholder-val="{{ true }}">
+        <div style="margin-bottom:22px;">
+          <div style="font-size:13px;font-weight:700;margin-bottom:11px;">快速套用課程</div>
+          <div class="noscroll" ref="{{ templateRowRef }}" style="display:flex;gap:9px;overflow-x:auto;padding-bottom:6px;margin:0 -4px;padding-left:4px;padding-right:4px;">
+            <sc-for list="{{ templates }}" as="t" hint-placeholder-count="5">
+              <button onClick="{{ t.onClick }}" style="{{ t.style }}" style-hover="{{ t.styleHover }}" style-active="{{ t.styleActive }}">
+                <span style="font-size:13.5px;font-weight:500;white-space:nowrap;">{{ t.name }}</span>
+                <span style="font-size:11px;color:#6e6e73;white-space:nowrap;">{{ t.meta }}</span>
+              </button>
+            </sc-for>
+          </div>
+        </div>
+        </sc-if>
+
+        <!-- ① scenario -->
+        <div style="margin-bottom:24px;">
+          <div style="font-size:14px;font-weight:700;margin-bottom:12px;">應用情境</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+            <sc-for list="{{ scenarioCards }}" as="s" hint-placeholder-count="3">
+              <button onClick="{{ s.onClick }}" style="{{ s.style }}" style-hover="{{ s.styleHover }}">
+                <span style="font-size:14px;font-weight:600;">{{ s.name }}</span>
+                <span style="font-size:11px;line-height:1.35;color:#6e6e73;text-wrap:pretty;">{{ s.desc }}</span>
+              </button>
+            </sc-for>
+          </div>
+        </div>
+
+        <!-- ② weapons (above field) -->
+        <div style="margin-bottom:24px;">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:12px;">
+            <span style="font-size:14px;font-weight:700;">武器與裝備</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;">
+            <sc-for list="{{ weaponChips }}" as="w" hint-placeholder-count="6">
+              <button onClick="{{ w.onClick }}" style="{{ w.style }}" style-hover="{{ w.styleHover }}">
+                <span style="{{ w.dot }}"></span>
+                <span style="flex:1;text-align:left;line-height:1.2;">{{ w.name }}</span>
+              </button>
+            </sc-for>
+          </div>
+          <sc-if value="{{ showPistolType }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;align-items:center;gap:10px;margin-top:11px;padding:10px 13px;border:1px solid #ececf0;border-radius:16px;background:#f5f5f7;">
+              <span style="font-size:12.5px;color:#6e6e73;flex:none;">手槍類型</span>
+              <div style="display:flex;gap:7px;">
+                <sc-for list="{{ pistolTypes }}" as="pt" hint-placeholder-count="2">
+                  <button onClick="{{ pt.onClick }}" style="{{ pt.style }}" style-hover="{{ pt.styleHover }}">{{ pt.label }}</button>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+
+        <!-- ③ field -->
+        <div style="margin-bottom:24px;">
+          <div style="font-size:14px;font-weight:700;margin-bottom:12px;">場地大小</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:9px;">
+            <sc-for list="{{ fieldBtns }}" as="g" hint-placeholder-count="4">
+              <button onClick="{{ g.onClick }}" style="{{ g.style }}" style-hover="{{ g.styleHover }}">
+                <span style="font-size:14px;font-weight:500;">{{ g.name }}</span>
+                <span style="font-size:11px;color:#6e6e73;">{{ g.range }}</span>
+              </button>
+            </sc-for>
+          </div>
+        </div>
+
+        <!-- ④ people -->
+        <div style="margin-bottom:24px;">
+          <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:12px;">
+            <span style="font-size:14px;font-weight:700;">同時受訓人數</span>
+            <sc-if value="{{ peopleLimited }}" hint-placeholder-val="{{ false }}">
+              <span style="font-size:11px;color:#e8590c;">{{ peopleNote }}</span>
+            </sc-if>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;">
+            <sc-for list="{{ peopleBtns }}" as="p" hint-placeholder-count="6">
+              <button onClick="{{ p.onClick }}" style="{{ p.style }}" style-hover="{{ p.styleHover }}">{{ p.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+
+        <!-- ⑤ site conditions (system auto-resolves the positioning solution) -->
+        <div style="margin-bottom:6px;">
+          <div style="font-size:14px;font-weight:700;margin-bottom:3px;">場地條件</div>
+          <div style="font-size:11px;color:#6e6e73;margin-bottom:12px;">勾選現場狀況，系統自動推薦最合適的定位方案</div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <sc-for list="{{ condRows }}" as="c" hint-placeholder-count="4">
+              <button onClick="{{ c.onClick }}" style="{{ c.style }}" style-hover="{{ c.styleHover }}">
+                <span style="flex:1;text-align:left;">
+                  <span style="display:block;font-size:14px;font-weight:500;">{{ c.title }}</span>
+                  <span style="display:block;font-size:11.5px;color:#6e6e73;margin-top:2px;line-height:1.35;">{{ c.desc }}</span>
+                </span>
+                <span style="{{ c.switchTrack }}"><span style="{{ c.switchKnob }}"></span></span>
+              </button>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== Details ===== -->
+    <div style="margin-top:60px;">
+      <h2 style="font-size:13px;font-weight:700;letter-spacing:.4px;color:#6e6e73;text-transform:uppercase;margin:0 0 18px;">建議定位方案</h2>
+      <div style="border:1px solid #ececf0;border-radius:26px;padding:22px;background:#fff;display:flex;align-items:center;gap:22px;margin-bottom:48px;flex-wrap:wrap;">
+        <div style="width:150px;height:118px;border-radius:18px;background:#f5f5f7;border:1px solid #ececf0;display:flex;align-items:center;justify-content:center;overflow:hidden;flex:none;">
+          <sc-if value="{{ resolvedCard.img }}" hint-placeholder-val="{{ false }}">
+            <div style="{{ resolvedCard.imgStyle }}"></div>
+          </sc-if>
+          <sc-if value="{{ resolvedNoImg }}" hint-placeholder-val="{{ false }}">
+            <span style="font:500 12px ui-monospace,monospace;color:#9a9aa0;">設備照</span>
+          </sc-if>
+        </div>
+        <div style="flex:1;min-width:220px;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-wrap:wrap;">
+            <span style="font-size:20px;font-weight:700;letter-spacing:-.2px;">{{ resolvedCard.name }}</span>
+            <span style="font-size:11px;font-weight:600;color:#0071e3;background:#eaf2fe;padding:3px 9px;border-radius:8px;">系統推薦</span>
+            <span style="font-size:11px;color:#6e6e73;border:1px solid #e2e2e7;padding:3px 9px;border-radius:8px;">{{ resolvedCard.build }}</span>
+          </div>
+          <div style="font-size:13.5px;color:#1d1d1f;line-height:1.5;margin-bottom:6px;">{{ resolvedCard.benefit }}</div>
+          <div style="font-size:12px;color:#6e6e73;line-height:1.5;">{{ resolvedCard.reason }}</div>
+          <div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:11px;">
+            <sc-for list="{{ resolvedCard.condTags }}" as="ct" hint-placeholder-count="2">
+              <span style="font-size:11px;color:#3a3a3f;background:#f0f0f3;padding:4px 10px;border-radius:980px;">{{ ct }}</span>
+            </sc-for>
+          </div>
+        </div>
+        <sc-if value="{{ resolvedCard.matActive }}" hint-placeholder-val="{{ false }}">
+          <div style="flex:none;width:188px;border-left:1px solid #ececf0;padding-left:20px;">
+            <div style="font-size:11px;color:#6e6e73;margin-bottom:8px;">地墊鋪設示意</div>
+            <div style="width:100%;height:96px;border-radius:14px;background:#1d2330;position:relative;overflow:hidden;border:1px solid #2a3242;">
+              <div style="position:absolute;inset:14px;border-radius:8px;background-image:linear-gradient(#3a4a55 1px,transparent 1px),linear-gradient(90deg,#3a4a55 1px,transparent 1px);background-size:18px 18px;opacity:.55;"></div>
+              <div style="position:absolute;left:50%;top:50%;width:13px;height:13px;border-radius:50%;transform:translate(-50%,-50%);background:#0a84ff;box-shadow:0 0 0 6px rgba(10,132,255,.22);"></div>
+            </div>
+            <div style="font-size:11px;color:#6e6e73;line-height:1.4;margin-top:8px;">於地面鋪設定位燈條／燈點，現場需可施作</div>
+          </div>
+        </sc-if>
+      </div>
+
+      <h2 style="font-size:13px;font-weight:700;letter-spacing:.4px;color:#6e6e73;text-transform:uppercase;margin:0 0 18px;">方案內容</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;">
+        <sc-for list="{{ bom }}" as="b" hint-placeholder-count="4">
+          <div style="border:1px solid #ececf0;border-radius:26px;padding:20px;background:#fff;transition:all .18s ease;" style-hover="{{ bomHover }}">
+            <div style="height:96px;border-radius:18px;background:{{ b.boxBg }};display:flex;align-items:center;justify-content:center;margin-bottom:14px;overflow:hidden;">
+              <sc-if value="{{ b.img }}" hint-placeholder-val="{{ false }}">
+                <div style="{{ b.imgStyle }}"></div>
+              </sc-if>
+              <sc-if value="{{ b.glyph }}" hint-placeholder-val="{{ false }}">
+                <span style="font-size:34px;color:{{ b.glyphColor }};">{{ b.glyph }}</span>
+              </sc-if>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+              <span style="font-size:15px;font-weight:600;line-height:1.25;">{{ b.name }}</span>
+              <span style="font-size:13px;font-weight:700;color:{{ scene.accent }};white-space:nowrap;">{{ b.qty }}</span>
+            </div>
+            <div style="font-size:12px;color:#6e6e73;line-height:1.4;margin-top:4px;">{{ b.note }}</div>
+          </div>
+        </sc-for>
+      </div>
+
+      <h2 style="font-size:13px;font-weight:700;letter-spacing:.4px;color:#6e6e73;text-transform:uppercase;margin:44px 0 18px;">規格摘要</h2>
+      <div style="border:1px solid #ececf0;border-radius:26px;overflow:hidden;">
+        <sc-for list="{{ specs }}" as="s" hint-placeholder-count="5">
+          <div style="{{ s.rowStyle }}">
+            <span style="font-size:13.5px;color:#6e6e73;">{{ s.k }}</span>
+            <span style="font-size:13.5px;font-weight:500;text-align:right;">{{ s.v }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+
+  <sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;left:50%;bottom:32px;transform:translateX(-50%);background:#1d1d1f;color:#fff;font-size:13.5px;padding:12px 20px;border-radius:980px;box-shadow:0 8px 30px rgba(0,0,0,.22);z-index:80;">{{ toast }}</div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:860},&quot;showQuickTemplates&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  state = {
+    scenario: 'police',
+    weapons: ['手槍', '步槍'],
+    field: 'medium',
+    people: 'p8',
+    center: 1,
+    dragging: false,
+    dragDX: 0,
+    toast: '',
+    pistolType: 'electric',
+    // 場地條件（系統依此自動選出最優定位方案，使用者不需懂技術）
+    condBuild: true,    // 可施工架設（固定設備 / 桁架 / 基站）
+    condMat: true,      // 可鋪設地墊 / 地面裝置
+    condOutdoor: false, // 室外或強光干擾
+    condMobile: false,  // 需移動 / 非固定場館（快速布置收拾）
+  };
+
+  // horizontal wheel-scroll for the quick-template row
+  templateRowRef = (el) => {
+    if (el && !el._wheelBound) {
+      el._wheelBound = true;
+      el.addEventListener('wheel', (e) => {
+        if (Math.abs(e.deltaY) >= Math.abs(e.deltaX) && e.deltaY !== 0) {
+          el.scrollLeft += e.deltaY;
+          e.preventDefault();
+        }
+      }, { passive: false });
+    }
+  };
+
+  // unified blue (no per-scenario color)
+  ACC = '#0071e3';
+  ACCD = '#0077ed';
+
+  scenariosData = [
+    { id: 'police', name: '警勤模擬', desc: '射擊與警用裝備多人協同' },
+    { id: 'military', name: '軍事模擬', desc: 'AI 合成化戰場 · CQB' },
+    { id: 'fire', name: '消防模擬', desc: '滅火、救援與災害應變' },
+  ];
+
+  weaponsData = [
+    { id: '手槍', name: '手槍', price: 80000, sc: ['police', 'military'], img: 'assets/w-pistol.png', imgScale: 0.7 },
+    { id: '步槍', name: '步槍', price: 100000, sc: ['police', 'military'], img: 'assets/w-rifle.png' },
+    { id: '警棍', name: '警棍', price: 50000, sc: ['police'], img: null },
+    { id: '電擊槍', name: '電擊槍', price: 60000, sc: ['police'], img: null },
+    { id: '辣椒水罐', name: '辣椒水罐', price: 40000, sc: ['police'], img: null },
+    { id: '衝鋒槍', name: '衝鋒槍', price: 100000, sc: ['military'], img: 'assets/w-smg.png' },
+    { id: '機槍', name: '機槍', price: 150000, sc: ['military'], img: 'assets/w-mg.png' },
+    { id: '狙擊槍', name: '狙擊槍', price: 120000, sc: ['military'], img: 'assets/w-sniper.png' },
+    { id: '榴彈槍', name: '榴彈槍', price: 150000, sc: ['military'], img: null },
+    { id: '飛彈/火箭', name: '飛彈/火箭發射器', price: 300000, sc: ['military'], img: 'assets/w-missile.png' },
+    { id: '無人機', name: '無人機', price: 200000, sc: ['military', 'fire'], img: null },
+    { id: '悍馬車', name: '載具 · 悍馬車', price: 500000, sc: ['military'], img: null },
+    { id: '快艇', name: '載具 · 快艇', price: 500000, sc: ['military'], img: null },
+    { id: '戰車', name: '載具 · 戰車', price: 500000, sc: ['military'], img: null },
+    { id: '滅火器', name: '滅火器', price: 80000, sc: ['fire'], img: null },
+    { id: '噴水槍', name: '噴水槍', price: 70000, sc: ['fire'], img: null },
+  ];
+
+  trackingData = [
+    { id: 'antilatency', name: 'Antilatency', fields: ['small', 'medium', 'large', 'xlarge'], build: '需施工', perPerson: 60000, base: 200000, benefit: '大場域可擴展、抗遮擋', needsBuild: true, usesMat: true, optical: false },
+    { id: 'optitrack', name: 'OptiTrack', fields: ['large', 'xlarge'], build: '需施工', perPerson: 150000, base: 800000, benefit: '精度最高、適合大場域', needsBuild: true, usesMat: false, optical: true },
+    { id: 'ultimate', name: 'Ultimate Tracker', fields: ['small', 'medium'], build: '免施工', perPerson: 50000, base: 0, benefit: '免布置、可攜、快速部署', needsBuild: false, usesMat: false, optical: false },
+    { id: 'wrist', name: 'Wrist Tracker', fields: ['small', 'medium'], build: '免施工', perPerson: 45000, base: 0, benefit: '免布置、輕便', needsBuild: false, usesMat: false, optical: false },
+    { id: 'sensoryx', name: 'Sensoryx', fields: ['small', 'medium'], build: '免施工', perPerson: 55000, base: 0, benefit: '體積更小、免布置', needsBuild: false, usesMat: false, optical: false },
+    { id: 'vive', name: 'Vive Tracker', fields: ['small'], build: '需基站', perPerson: 40000, base: 100000, benefit: '平價高精度、適合小空間', needsBuild: true, usesMat: false, optical: true },
+  ];
+
+  fieldsData = [
+    { id: 'small', name: '小型', range: '< 36 ㎡', rep: 25 },
+    { id: 'medium', name: '中型', range: '36–81 ㎡', rep: 60 },
+    { id: 'large', name: '大型', range: '81–300 ㎡', rep: 180 },
+    { id: 'xlarge', name: '超大型', range: '> 300 ㎡', rep: 500 },
+  ];
+
+  peopleTiers = [
+    { id: 'p1', label: '1', rep: 1 },
+    { id: 'p4', label: '2–4', rep: 4 },
+    { id: 'p8', label: '5–8', rep: 8 },
+    { id: 'p16', label: '9–16', rep: 16 },
+    { id: 'p24', label: '17–24', rep: 24 },
+    { id: 'p40', label: '25–40', rep: 40 },
+  ];
+
+  HELMET = 30000;
+
+  DEV_IMG = { antilatency: 'assets/dev-antilatency.png', optitrack: 'assets/dev-optitrack.png', ultimate: 'assets/dev-ultimate.png', sensoryx: 'assets/dev-sensoryx.png', vive: 'assets/dev-vive.png', wrist: 'assets/dev-wrist.png' };
+
+  templatesData = [
+    { name: '單兵射擊模擬教室', scenario: 'police', people: 'p8', field: 'medium', weapons: ['手槍', '步槍'], tracking: 'antilatency' },
+    { name: '警勤綜合應對', scenario: 'police', people: 'p4', field: 'small', weapons: ['手槍', '警棍', '電擊槍', '辣椒水罐'], tracking: 'ultimate' },
+    { name: '陣地防衛', scenario: 'military', people: 'p4', field: 'medium', weapons: ['步槍'], tracking: 'antilatency' },
+    { name: '單兵戰場情境', scenario: 'military', people: 'p8', field: 'large', weapons: ['步槍', '機槍'], tracking: 'antilatency' },
+    { name: '抗壓館全身訓練', scenario: 'military', people: 'p8', field: 'xlarge', weapons: ['步槍', '手槍'], tracking: 'antilatency' },
+    { name: '載具駕駛訓練', scenario: 'military', people: 'p16', field: 'xlarge', weapons: ['悍馬車', '快艇'], tracking: 'antilatency' },
+    { name: '消防滅火救援', scenario: 'fire', people: 'p4', field: 'medium', weapons: ['滅火器', '無人機', '噴水槍'], tracking: 'antilatency' },
+  ];
+
+  // ---------- helpers ----------
+  fmt(n) { return n.toLocaleString('en-US'); }
+  pistolSuffix() { return this.state.pistolType === 'gas' ? '（瓦斯）' : '（電動）'; }
+  wName(w) { return w && w.id === '手槍' ? w.name + this.pistolSuffix() : (w ? w.name : ''); }
+  selectedWeapons() {
+    return this.state.weapons
+      .map(id => this.weaponsData.find(w => w.id === id))
+      .filter(w => w && w.sc.includes(this.state.scenario));
+  }
+  // field caps: small→5–8, medium→9–16, large/xlarge→full
+  fieldCapIdx(field) { return ({ small: 2, medium: 3, large: 5, xlarge: 5 })[field] ?? 5; }
+  peopleCapIdx(weapons, field) {
+    let cap = this.fieldCapIdx(field || this.state.field);
+    if (weapons.includes('滅火器')) cap = Math.min(cap, 1); // 滅火器 限 1 / 2–4
+    return cap;
+  }
+  fixPeople(weapons, people, field) {
+    const cap = this.peopleCapIdx(weapons, field);
+    const order = this.peopleTiers.map(p => p.id);
+    let idx = order.indexOf(people); if (idx < 0) idx = 2;
+    return idx > cap ? order[cap] : people;
+  }
+  norm(x, n) { if (n <= 0) return 0; let o = ((x % n) + n) % n; if (o > n / 2) o -= n; return o; }
+  centerIndex() { const n = this.selectedWeapons().length; return n ? (((Math.round(this.state.center) % n) + n) % n) : 0; }
+  // tracking availability = field allowed ∩ people allowed (Antilatency 不支援 25–40)
+  trackAvail(t, field, peopleId) {
+    if (!t || !t.fields.includes(field)) return false;
+    if (t.id === 'antilatency') {
+      const idx = this.peopleTiers.findIndex(p => p.id === (peopleId || this.state.people));
+      if (idx >= 5) return false; // 25–40 人
+    }
+    return true;
+  }
+  disabledReason(t, peopleId) {
+    if (t.id === 'antilatency') {
+      const idx = this.peopleTiers.findIndex(p => p.id === (peopleId || this.state.people));
+      if (idx >= 5) return '不支援 25–40 人';
+    }
+    if (t.id === 'optitrack') return '需大型以上場地';
+    if (t.id === 'vive') return '僅適用小型場地';
+    return '不適用此場地';
+  }
+  firstAvailable(field, peopleId) { const a = this.trackingData.find(t => this.trackAvail(t, field, peopleId)); return a ? a.id : 'optitrack'; }
+
+  // ---------- auto-resolve positioning from site conditions ----------
+  cond() { return { build: this.state.condBuild, mat: this.state.condMat, outdoor: this.state.condOutdoor, mobile: this.state.condMobile }; }
+  feasibleTracks(field, peopleId, c) {
+    return this.trackingData.filter(t => {
+      if (!this.trackAvail(t, field, peopleId)) return false;
+      if (!c.build && t.needsBuild) return false;   // 不能施工 → 排除需固定安裝
+      if (!c.mat && t.usesMat) return false;         // 不能鋪地墊 → 排除地面燈條
+      if (c.outdoor && t.optical) return false;       // 室外強光 → 排除光學/紅外
+      if (c.mobile && t.needsBuild) return false;     // 需移動 → 只留免施工可攜
+      return true;
+    });
+  }
+  resolveTracking(field, peopleId, c) {
+    const rep = (this.peopleTiers.find(p => p.id === peopleId) || { rep: 8 }).rep;
+    let list = this.feasibleTracks(field, peopleId, c);
+    const exact = list.length > 0;
+    if (!list.length) list = this.trackingData.filter(t => this.trackAvail(t, field, peopleId));
+    if (!list.length) list = this.trackingData.filter(t => t.fields.includes(field));
+    const cost = t => t.base + t.perPerson * rep;
+    list = list.slice().sort((a, b) => cost(a) - cost(b)); // 多方案符合 → 取成本最低
+    return { track: list[0] || this.trackingData[0], exact, count: this.feasibleTracks(field, peopleId, c).length };
+  }
+  toggleCond = (key) => { const k = 'cond' + key; this.setState({ [k]: !this.state[k] }); };
+
+  // ---------- mutations ----------
+  setScenario(id) {
+    if (id === this.state.scenario) return;
+    const valid = this.weaponsData.filter(w => w.sc.includes(id)).map(w => w.id);
+    const weapons = this.state.weapons.filter(w => valid.includes(w));
+    this.setState({ scenario: id, weapons, people: this.fixPeople(weapons, this.state.people), center: 0 });
+  }
+  toggleWeapon(id) {
+    const has = this.state.weapons.includes(id);
+    const weapons = has ? this.state.weapons.filter(x => x !== id) : [...this.state.weapons, id];
+    this.setState({ weapons, people: this.fixPeople(weapons, this.state.people) }, () => {
+      if (!has) { const sel = this.selectedWeapons(); const idx = sel.findIndex(s => s.id === id); if (idx >= 0) this.setState({ center: idx }); }
+    });
+  }
+  setPeople(id) { this.setState({ people: id }); }
+  removeCenter = () => { const sel = this.selectedWeapons(); const t = sel[this.centerIndex()]; if (t) this.toggleWeapon(t.id); };
+  prev = () => this.setState({ center: this.state.center - 1 });
+  next = () => this.setState({ center: this.state.center + 1 });
+  goCard(i) { const n = this.selectedWeapons().length; this.setState({ center: this.state.center + this.norm(i - this.centerIndex(), n) }); }
+
+  setField(id) {
+    const people = this.fixPeople(this.state.weapons, this.state.people, id);
+    this.setState({ field: id, people });
+  }
+  applyTemplate(t) {
+    const people = this.fixPeople(t.weapons, t.people, t.field);
+    this.setState({ scenario: t.scenario, field: t.field, people, weapons: [...t.weapons], center: 0 });
+  }
+  reset = () => this.setState({ scenario: 'police', weapons: ['手槍', '步槍'], field: 'medium', people: 'p8', center: 1, condBuild: true, condMat: true, condOutdoor: false, condMobile: false });
+
+  // ---------- infinite drag ----------
+  onDragStart = (e) => {
+    if (this.selectedWeapons().length < 2) return;
+    this._sx = e.clientX; this._sdx = 0;
+    this.setState({ dragging: true, dragDX: 0 });
+    this._mv = (ev) => { this._sdx = ev.clientX - this._sx; this.setState({ dragDX: this._sdx }); };
+    this._up = () => {
+      document.removeEventListener('pointermove', this._mv);
+      document.removeEventListener('pointerup', this._up);
+      const nc = Math.round(this.state.center - this._sdx / 200);
+      this.setState({ dragging: false, dragDX: 0, center: nc });
+    };
+    document.addEventListener('pointermove', this._mv);
+    document.addEventListener('pointerup', this._up);
+  };
+
+  showToast(msg) { this.setState({ toast: msg }); clearTimeout(this._tt); this._tt = setTimeout(() => this.setState({ toast: '' }), 2200); }
+
+  renderVals() {
+    const ACC = this.ACC, ACCD = this.ACCD;
+    const SELBG = ACC + '14';
+    const LINE = '#d2d2d7', SUB = '#6e6e73', TEXT = '#1d1d1f', BG2 = '#f5f5f7';
+    const trans = 'all .18s ease';
+    const lift = (bg) => ({ background: bg || BG2, borderColor: '#b5b5bb', transform: 'translateY(-2px)', boxShadow: '0 6px 18px rgba(0,0,0,.09)' });
+
+    const { scenario, weapons, field } = this.state;
+    const fieldObj = this.fieldsData.find(f => f.id === field);
+    const hasExt = weapons.includes('滅火器');
+    const pCap = this.peopleCapIdx(weapons, field);
+    const availTiers = this.peopleTiers.filter((p, i) => i <= pCap);
+    const peopleId = this.fixPeople(weapons, this.state.people, field);
+    const fName = { small: '小型', medium: '中型', large: '大型', xlarge: '超大型' }[field];
+    const peopleNote = hasExt ? '滅火器限 1–4 人' : (this.fieldCapIdx(field) < 5 ? (fName + '場地上限 ' + this.peopleTiers[this.fieldCapIdx(field)].label + ' 人') : '');
+    const tier = this.peopleTiers.find(p => p.id === peopleId) || this.peopleTiers[2];
+    const rep = tier.rep;
+    // ---- auto-resolve positioning from site conditions (user never picks the brand) ----
+    const cnd = this.cond();
+    const resolved = this.resolveTracking(field, peopleId, cnd);
+    const trackObj = resolved.track;
+    const needsBuild = trackObj.build !== '免施工';
+    const sel = this.selectedWeapons();
+
+    const weaponSum = sel.reduce((s, w) => s + w.price, 0);
+    const total = (this.HELMET + trackObj.perPerson) * rep + trackObj.base + weaponSum;
+
+    // ===== infinite carousel =====
+    const N = sel.length;
+    const spacing = 150;            // px the ring rotates one slot per drag
+    const Rx = 150, Ry = 36;        // ellipse radii (looking down at a circle)
+    const TWO_PI = Math.PI * 2;
+    const frac = this.state.center - (this.state.dragging ? this.state.dragDX / spacing : 0);
+    const cIdx = N ? (((Math.round(frac) % N) + N) % N) : 0;
+    const carouselCards = sel.map((w, i) => {
+      const a = N > 1 ? ((i - frac) / N) * TWO_PI : 0;   // 0 = front-center
+      const depth = Math.cos(a);                          // 1 front … -1 back
+      const front = (depth + 1) / 2;                      // 0 back … 1 front
+      const tx = Rx * Math.sin(a);
+      const ty = Ry * depth;                              // front lower, back higher
+      const scale = 0.3 + front * 1.5;                    // back 30%, front 180%
+      const opacity = 0.34 + front * 0.66;
+      const blur = (1 - front) * 2.4;
+      const z = 100 + Math.round(front * 200);
+      const isFront = Math.abs(this.norm(i - frac, N)) < 0.5;
+      return {
+        img: w.img, name: w.name, placeholder: !w.img,
+        imgStyle: w.img ? { width: '100%', height: '100%', backgroundImage: 'url("' + w.img + '")', backgroundSize: (w.imgScale ? Math.round(w.imgScale * 100) + '%' : 'contain'), backgroundRepeat: 'no-repeat', backgroundPosition: 'center', filter: 'drop-shadow(0 14px 18px rgba(0,0,0,.18))' } : null,
+        onClick: () => this.goCard(i),
+        wrap: {
+          position: 'absolute', left: '50%', top: '50%', width: '200px', height: '132px',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '6px',
+          transform: 'translate(-50%,-50%) translateX(' + tx.toFixed(1) + 'px) translateY(' + ty.toFixed(1) + 'px) scale(' + scale.toFixed(3) + ')',
+          opacity: opacity.toFixed(3), zIndex: z,
+          filter: blur > 0.2 ? 'blur(' + blur.toFixed(1) + 'px)' : 'none',
+          transition: this.state.dragging ? 'none' : 'transform .5s cubic-bezier(.22,.61,.36,1), opacity .5s ease, filter .5s ease',
+          cursor: isFront ? 'grab' : 'pointer',
+        },
+        wrapHover: { opacity: '1', filter: isFront ? 'brightness(1.04)' : 'brightness(1.08)' },
+      };
+    });
+    const centerWeapon = sel[cIdx] || null;
+
+    // ===== style factories =====
+    const segBase = (selF, extra) => Object.assign({
+      fontFamily: 'inherit', cursor: 'pointer', transition: trans, borderRadius: '18px',
+      border: '1px solid ' + LINE, background: '#fff', color: TEXT,
+    }, selF ? { border: '1.5px solid ' + ACC, background: SELBG, color: ACC } : {}, extra || {});
+
+    const scenarioCards = this.scenariosData.map(s => {
+      const selF = s.id === scenario;
+      return {
+        name: s.name, desc: s.desc, onClick: () => this.setScenario(s.id),
+        style: Object.assign({ fontFamily: 'inherit', cursor: 'pointer', transition: trans, borderRadius: '18px', display: 'flex', flexDirection: 'column', gap: '5px', alignItems: 'flex-start', textAlign: 'left', padding: '13px' },
+          selF ? { border: '1.5px solid ' + ACC, background: SELBG } : { border: '1px solid ' + LINE, background: '#fff' }),
+        styleHover: selF ? { transform: 'translateY(-2px)', boxShadow: '0 6px 18px rgba(0,0,0,.09)' } : lift(),
+        dot: { width: '9px', height: '9px', borderRadius: '50%', background: ACC, display: 'inline-block', opacity: selF ? 1 : 0.35 },
+      };
+    });
+
+    const weaponChips = this.weaponsData.filter(w => w.sc.includes(scenario)).map(w => {
+      const selF = weapons.includes(w.id);
+      return {
+        name: w.name, onClick: () => this.toggleWeapon(w.id),
+        style: segBase(selF, { display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 10px', fontSize: '12.5px', fontWeight: selF ? 500 : 400, borderRadius: '16px' }),
+        styleHover: selF ? { background: ACC + '1f', transform: 'translateY(-2px)', boxShadow: '0 6px 16px rgba(0,0,0,.08)' } : lift(),
+        dot: { width: '14px', height: '14px', borderRadius: '5px', flex: 'none', display: 'inline-block', border: selF ? 'none' : '1.5px solid ' + LINE, background: selF ? ACC : '#fff', boxShadow: selF ? 'inset 0 0 0 2px #fff, inset 0 0 0 3px ' + ACC : 'none' },
+      };
+    });
+
+    const peopleBtns = availTiers.map(p => {
+      const selF = p.id === peopleId;
+      return {
+        label: p.label, onClick: () => this.setPeople(p.id),
+        style: Object.assign({ fontFamily: 'inherit', cursor: 'pointer', transition: trans, padding: '11px 4px', borderRadius: '16px', fontSize: '14px', fontWeight: 500, textAlign: 'center' },
+          selF ? { background: ACC, color: '#fff', border: '1px solid ' + ACC } : { background: '#fff', color: TEXT, border: '1px solid ' + LINE }),
+        styleHover: selF ? { background: ACCD, transform: 'translateY(-2px)', boxShadow: '0 6px 16px rgba(0,0,0,.12)' } : lift(),
+      };
+    });
+
+    const fieldBtns = this.fieldsData.map(f => {
+      const selF = f.id === field;
+      return {
+        name: f.name, range: f.range, onClick: () => this.setField(f.id),
+        style: segBase(selF, { display: 'flex', flexDirection: 'column', gap: '2px', alignItems: 'center', textAlign: 'center', padding: '11px 6px' }),
+        styleHover: selF ? { transform: 'translateY(-2px)', boxShadow: '0 6px 16px rgba(0,0,0,.08)' } : lift(),
+      };
+    });
+
+    // ===== site conditions (replaces manual positioning picker) =====
+    const condDefs = [
+      { key: 'Build', on: cnd.build, title: '現場可施工架設', desc: '可固定安裝設備、桁架或基站' },
+      { key: 'Mat', on: cnd.mat, title: '地面可鋪設地墊／燈條', desc: '允許在地面鋪設定位裝置' },
+      { key: 'Outdoor', on: cnd.outdoor, title: '室外或強光環境', desc: '窗戶多、日光強或光源干擾大' },
+      { key: 'Mobile', on: cnd.mobile, title: '需移動／非固定場館', desc: '需快速布置與收拾（約 1 小時內）' },
+    ];
+    const condRows = condDefs.map(c => ({
+      title: c.title, desc: c.desc, on: c.on, onClick: () => this.toggleCond(c.key),
+      style: Object.assign({ fontFamily: 'inherit', cursor: 'pointer', transition: trans, display: 'flex', alignItems: 'center', gap: '12px', padding: '13px 15px', borderRadius: '16px', textAlign: 'left', width: '100%' },
+        c.on ? { border: '1.5px solid ' + ACC, background: SELBG } : { border: '1px solid ' + LINE, background: '#fff' }),
+      styleHover: c.on ? { background: ACC + '1f', transform: 'translateY(-2px)', boxShadow: '0 6px 16px rgba(0,0,0,.08)' } : lift(),
+      switchTrack: { width: '40px', height: '24px', borderRadius: '980px', flex: 'none', position: 'relative', transition: trans, background: c.on ? ACC : '#d2d2d7' },
+      switchKnob: { position: 'absolute', top: '2px', left: c.on ? '18px' : '2px', width: '20px', height: '20px', borderRadius: '50%', background: '#fff', transition: 'left .2s ease', boxShadow: '0 1px 3px rgba(0,0,0,.25)' },
+    }));
+
+    // resolved positioning solution (shown in content area, not chosen by user)
+    const matActive = cnd.mat && trackObj.usesMat;
+    const condTags = [];
+    if (cnd.build) condTags.push('可施工'); else condTags.push('不可施工');
+    if (cnd.mat) condTags.push('可鋪地墊'); else condTags.push('不可鋪地墊');
+    if (cnd.outdoor) condTags.push('室外/強光');
+    if (cnd.mobile) condTags.push('需移動');
+    const resolvedCard = {
+      name: trackObj.name,
+      build: trackObj.build,
+      benefit: trackObj.benefit,
+      img: this.DEV_IMG[trackObj.id] || null,
+      imgStyle: this.DEV_IMG[trackObj.id] ? { width: '100%', height: '100%', backgroundImage: 'url("' + this.DEV_IMG[trackObj.id] + '")', backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center' } : null,
+      exact: resolved.exact,
+      reason: resolved.exact ? ('依據場地條件，' + (resolved.count > 1 ? '符合的方案中採用成本最低者' : '為唯一符合的方案')) : '目前條件無完全符合方案，已建議最接近的方案，請與技術單位確認',
+      condTags,
+      matActive,
+    };
+
+    const tName = (id) => this.fieldsData.find(f => f.id === id).name;
+    const scName = (id) => ({ police: '警勤', military: '軍事', fire: '消防' })[id];
+    const pLabel = (id) => this.peopleTiers.find(p => p.id === id).label;
+    const templates = this.templatesData.map(t => ({
+      name: t.name, meta: scName(t.scenario) + ' · ' + pLabel(t.people) + ' 人 · ' + tName(t.field),
+      onClick: () => this.applyTemplate(t),
+      style: { fontFamily: 'inherit', cursor: 'pointer', transition: 'all .12s ease', display: 'flex', flexDirection: 'column', gap: '3px', alignItems: 'flex-start', padding: '11px 14px', borderRadius: '18px', border: '1px solid ' + LINE, background: '#fff', flex: 'none' },
+      styleHover: { borderColor: '#b5b5bb', transform: 'translateY(-2px)', boxShadow: '0 6px 18px rgba(0,0,0,.09)' },
+      styleActive: { background: ACC, borderColor: ACC, color: '#fff', transform: 'translateY(0)', boxShadow: '0 2px 8px rgba(0,113,227,.3)' },
+    }));
+
+    // ===== BOM =====
+    const devImgStyle = (src) => ({ width: '88%', height: '82%', backgroundImage: 'url("' + src + '")', backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center' });
+    const trackImg = this.DEV_IMG[trackObj.id];
+    const bom = [
+      { name: 'Focus Vision 頭盔', qty: '× ' + rep, note: '每位受訓人員配戴', glyph: null, glyphColor: ACC, boxBg: '#fff', img: 'assets/dev-helmet.png', imgStyle: devImgStyle('assets/dev-helmet.png') },
+      { name: trackObj.name + ' 定位設備', qty: '× ' + rep, note: '每人一組追蹤配置', glyph: trackImg ? null : '◎', glyphColor: ACC, boxBg: '#fff', img: trackImg, imgStyle: trackImg ? devImgStyle(trackImg) : null },
+    ];
+    if (needsBuild) bom.push({ name: '場域施工建置', qty: '× 1', note: trackObj.build + '（' + fieldObj.name + '場地）', glyph: '⚒', glyphColor: ACC, boxBg: BG2, img: null });
+    sel.forEach(w => bom.push({ name: this.wName(w), qty: '× 1', note: '武器開發製作 · NT$ ' + this.fmt(w.price), glyph: w.img ? null : '◆', glyphColor: ACC, boxBg: w.img ? '#fff' : BG2, img: w.img, imgStyle: w.img ? { width: '90%', height: '80%', backgroundImage: 'url("' + w.img + '")', backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center' } : null }));
+
+    // ===== specs =====
+    const specRows = [
+      ['場地級距', fieldObj.name + '（' + fieldObj.range + '，代表 ' + fieldObj.rep + ' ㎡）'],
+      ['同時受訓人數', tier.label + ' 人（估算 ' + rep + ' 人）'],
+      ['場地條件', condTags.join('、')],
+      ['建議定位方案', trackObj.name],
+      ['武器配置', sel.length ? sel.map(w => this.wName(w)).join('、') : '尚未選擇'],
+    ];
+    const specs = specRows.map((r, i) => ({
+      k: r[0], v: r[1],
+      rowStyle: { display: 'flex', justifyContent: 'space-between', gap: '20px', alignItems: 'center', padding: '14px 18px', background: i % 2 ? '#fafafb' : '#fff', borderTop: i ? '1px solid #ececef' : 'none' },
+    }));
+
+    // ===== pistol type (electric / gas) =====
+    const pistolTypes = [
+      { id: 'electric', label: '電動' },
+      { id: 'gas', label: '瓦斯' },
+    ].map(o => {
+      const selF = this.state.pistolType === o.id;
+      return {
+        label: o.label, onClick: () => this.setState({ pistolType: o.id }),
+        style: Object.assign({ fontFamily: 'inherit', cursor: 'pointer', transition: trans, padding: '7px 16px', borderRadius: '12px', fontSize: '13px', fontWeight: 500 },
+          selF ? { background: ACC, color: '#fff', border: '1px solid ' + ACC } : { background: '#fff', color: TEXT, border: '1px solid ' + LINE }),
+        styleHover: selF ? { background: ACCD } : { transform: 'translateY(-1px)', borderColor: '#b5b5bb', boxShadow: '0 4px 12px rgba(0,0,0,.08)' },
+      };
+    });
+
+    // ===== scene geometry (unified neutral palette) =====
+    const cx = 340, cy = 226, baseW = 232, baseD = 112;
+    const s = Math.max(0.5, Math.min(1.24, Math.sqrt(fieldObj.rep / 180)));
+    const w = baseW * s, d = baseD * s;
+    const pt = (x, y) => x.toFixed(1) + ',' + y.toFixed(1);
+    const floorPoints = [pt(cx, cy - d), pt(cx + w, cy), pt(cx, cy + d), pt(cx - w, cy)].join(' ');
+    const iw = w * 0.8, id = d * 0.8;
+    const itop = [cx, cy - id], iright = [cx + iw, cy], ibottom = [cx, cy + id], ileft = [cx - iw, cy];
+    const innerPoints = [pt(itop[0], itop[1]), pt(iright[0], iright[1]), pt(ibottom[0], ibottom[1]), pt(ileft[0], ileft[1])].join(' ');
+    const figFill = '#3a4a63', floorFill = '#eef1f6', gridCol = '#cdd5e0';
+    const armed = weapons.length > 0;
+
+    const maxFig = 24;
+    const count = Math.min(rep, maxFig);
+    const cols = Math.ceil(Math.sqrt(count));
+    const rows = Math.ceil(count / cols);
+    const figures = [];
+    for (let i = 0; i < count; i++) {
+      const r = Math.floor(i / cols), c = i % cols;
+      const a = cols > 1 ? (c / (cols - 1) - 0.5) * 1.05 : 0;
+      const b = rows > 1 ? (r / (rows - 1) - 0.5) * 1.05 : 0;
+      const sx = cx + (a - b) * w * 0.5;
+      const sy = cy + (a + b) * d * 0.5;
+      const dT = (sy - (cy - d)) / (2 * d);
+      const fs = 0.32 + dT * 0.2;
+      figures.push({ sy, fill: figFill, armed, t: 'translate(' + sx.toFixed(1) + ',' + sy.toFixed(1) + ') scale(' + fs.toFixed(3) + ')' });
+    }
+    figures.sort((p, q) => p.sy - q.sy);
+    const overflowText = rep > count ? '＋ 另 ' + (rep - count) + ' 人（共 ' + rep + ' 人）' : '';
+
+    const lerp = (p, q, t) => [p[0] + (q[0] - p[0]) * t, p[1] + (q[1] - p[1]) * t];
+    let floorDots = [], corners = [], showTruss = false, trussCams = [], truss = { x: 0, y: 0, y2: 0, w: 0 };
+    if (trackObj.id === 'antilatency') {
+      const edges = [[ileft, itop], [itop, iright], [iright, ibottom], [ibottom, ileft]];
+      edges.forEach(([p, q]) => [0.22, 0.5, 0.78].forEach(t => { const pos = lerp(p, q, t); floorDots.push({ x: pos[0].toFixed(1), y: pos[1].toFixed(1) }); }));
+    } else if (trackObj.id === 'optitrack') {
+      showTruss = true;
+      truss = { x: cx - w * 0.82, y: cy - d - 44, y2: cy - d - 39, w: w * 1.64 };
+      for (let k = 0; k < 5; k++) { const x = truss.x + (truss.w / 4) * k; trussCams.push({ t: 'translate(' + x.toFixed(1) + ',' + (truss.y + 6).toFixed(1) + ')' }); }
+    } else if (trackObj.id === 'vive') {
+      [ileft, iright].forEach(p => corners.push({ t: 'translate(' + p[0].toFixed(1) + ',' + (p[1] - 14).toFixed(1) + ')' }));
+    }
+
+    const summary = scName(scenario) + '模擬　·　' + tier.label + ' 人　·　' + fieldObj.name + '場地 (' + fieldObj.rep + '㎡)　·　' + trackObj.name;
+
+    // chrome
+    const ctaP = { fontFamily: 'inherit', fontSize: '13px', fontWeight: 500, color: '#fff', background: ACC, border: '1px solid ' + ACC, padding: '9px 16px', borderRadius: '980px', cursor: 'pointer', transition: trans };
+    const ctaS = { fontFamily: 'inherit', fontSize: '13px', fontWeight: 500, color: TEXT, background: '#fff', border: '1px solid ' + LINE, padding: '9px 15px', borderRadius: '980px', cursor: 'pointer', transition: trans };
+    const ghost = { fontFamily: 'inherit', fontSize: '13px', color: '#6e6e73', background: 'transparent', border: '1px solid transparent', padding: '9px 12px', borderRadius: '980px', cursor: 'pointer', transition: trans };
+    const arrowBase = (side) => ({ position: 'absolute', top: '50%', [side]: '6px', transform: 'translateY(-50%)', zIndex: 300, width: '38px', height: '38px', borderRadius: '50%', border: '1px solid ' + LINE, background: 'rgba(255,255,255,.92)', color: '#1d1d1f', fontSize: '21px', lineHeight: '1', cursor: 'pointer', transition: trans, boxShadow: '0 2px 10px rgba(0,0,0,.08)', fontFamily: 'inherit' });
+
+    return {
+      showTemplates: this.props.showQuickTemplates !== false,
+      templates, scenarioCards, weaponChips, peopleBtns, fieldBtns, condRows, resolvedCard,
+      templateRowRef: this.templateRowRef,
+      showPistolType: weapons.includes('手槍'), pistolTypes,
+      resolvedNoImg: !resolvedCard.img,
+      peopleLimited: !!peopleNote, peopleNote,
+      carouselCards, carouselEmpty: N === 0, showArrows: N > 1,
+      centerWeapon, centerName: this.wName(centerWeapon), centerFee: centerWeapon ? ('NT$ ' + this.fmt(centerWeapon.price)) : '',
+      weaponCount: N + ' 項',
+      bom, specs,
+      priceText: 'NT$ ' + this.fmt(total),
+      summary, sceneKey: scenario + '-' + field + '-' + peopleId + '-' + this.state.tracking,
+      scene: { accent: ACC, bgIn: '#ffffff', bgOut: '#eef1f5' },
+      floor: { points: floorPoints, inner: innerPoints, fill: floorFill, grid: gridCol, shadowR: (w * 0.92).toFixed(1), shadowRy: (d * 0.82).toFixed(1) },
+      figures, floorDots, corners, showTruss, truss, trussCams, overflowText,
+      toast: this.state.toast,
+      reset: this.reset, prev: this.prev, next: this.next, removeCenter: this.removeCenter, onDragStart: this.onDragStart,
+      exportQuote: () => this.showToast('已產生報價文件（示意）— ' + this.fmt(total) + ' 元'),
+      addToList: () => this.showToast('已加入方案清單'),
+      ctaPrimary: ctaP, ctaPrimaryHover: { background: ACCD, transform: 'translateY(-1px)', boxShadow: '0 6px 16px rgba(0,113,227,.28)' },
+      ctaSecondary: ctaS, ctaSecondaryHover: lift('#f5f5f7'),
+      ghostBtn: ghost, navGhostHover: { background: '#f5f5f7', color: '#1d1d1f' },
+      bomHover: { borderColor: '#c7c7cc', boxShadow: '0 8px 22px rgba(0,0,0,.07)', transform: 'translateY(-2px)' },
+      arrowL: arrowBase('left'), arrowR: arrowBase('right'), arrowHover: { background: '#fff', transform: 'translateY(-50%) scale(1.06)', boxShadow: '0 4px 16px rgba(0,0,0,.14)' },
+      removeBtn: { fontFamily: 'inherit', fontSize: '12px', color: '#6e6e73', background: '#fff', border: '1px solid ' + LINE, padding: '6px 13px', borderRadius: '980px', cursor: 'pointer', transition: trans },
+      removeBtnHover: { background: '#fdecec', borderColor: '#f3b4b4', color: '#d11', transform: 'translateY(-1px)' },
+    };
+  }
+}
+</script>
+</body>
+</html>

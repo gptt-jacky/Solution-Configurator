@@ -7,5 +7,7 @@
 			"path": "../Skill"
 		}
 	],
-	"settings": {}
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "解決方案配置器"
+	}
 }
