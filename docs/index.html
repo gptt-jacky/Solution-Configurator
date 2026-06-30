@@ -9,7 +9,7 @@
 <x-dc>
 <helmet>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&amp;display=swap" rel="stylesheet">
 <style>
   *{box-sizing:border-box;}
   body{margin:0;background:#fff;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
@@ -28,9 +28,9 @@
 </helmet>
 <template id="__bundler_thumbnail">
   <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-    <rect width="100" height="100" rx="22" fill="#0071e3"/>
-    <rect x="30" y="30" width="40" height="40" rx="13" fill="#ffffff"/>
-    <circle cx="50" cy="50" r="9" fill="none" stroke="#0071e3" stroke-width="4"/>
+    <rect width="100" height="100" rx="22" fill="#0071e3"></rect>
+    <rect x="30" y="30" width="40" height="40" rx="13" fill="#ffffff"></rect>
+    <circle cx="50" cy="50" r="9" fill="none" stroke="#0071e3" stroke-width="4"></circle>
   </svg>
 </template>
 <div style="font-family:-apple-system,'SF Pro Display','SF Pro Text','PingFang TC','Noto Sans TC',sans-serif;color:#1d1d1f;min-height:100vh;background:#fff;">
@@ -39,19 +39,24 @@
   <div style="position:sticky;top:0;z-index:60;background:rgba(255,255,255,.85);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid #d2d2d7;">
     <div style="max-width:1280px;margin:0 auto;min-height:62px;padding:9px 28px;display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;">
       <div style="display:flex;align-items:center;gap:11px;min-width:0;">
-        <img src="assets/logo-r.png" alt="logo" style="height:30px;width:auto;display:block;flex:none;"/>
+        <img src="assets/logo-r.png" alt="logo" style="height:30px;width:auto;display:block;flex:none;">
         <span style="font-size:15px;font-weight:700;letter-spacing:.2px;">全球動力科技</span>
-        <span style="font-size:13px;color:#6e6e73;border-left:1px solid #d2d2d7;padding-left:11px;white-space:nowrap;">XR 模擬訓練 · 方案配置器</span>
+        <span style="font-size:13px;color:#6e6e73;border-left:1px solid #d2d2d7;padding-left:11px;white-space:nowrap;">{{ t.brandSub }}</span>
       </div>
       <div style="display:flex;align-items:center;gap:14px;">
+        <div style="display:flex;align-items:center;gap:2px;background:#f0f0f2;border-radius:980px;padding:3px;">
+          <sc-for list="{{ langBtns }}" as="lb" hint-placeholder-count="3">
+            <button onClick="{{ lb.onClick }}" style="{{ lb.style }}" style-hover="{{ lb.styleHover }}">{{ lb.label }}</button>
+          </sc-for>
+        </div>
         <div style="text-align:right;line-height:1;">
-          <div style="font-size:11px;color:#6e6e73;margin-bottom:3px;">預估價格</div>
-          <div style="font-size:28px;font-weight:700;letter-spacing:-.5px;color:#0071e3;">{{ priceText }}</div>
+          <div style="font-size:10px;color:#6e6e73;margin-bottom:2px;">{{ t.estPrice }}</div>
+          <div style="font-size:21px;font-weight:700;letter-spacing:-.4px;color:#0071e3;white-space:nowrap;">{{ priceText }}</div>
         </div>
         <div style="display:flex;align-items:center;gap:8px;">
-          <button onClick="{{ exportQuote }}" style="{{ ctaPrimary }}" style-hover="{{ ctaPrimaryHover }}">匯出報價</button>
-          <button onClick="{{ addToList }}" style="{{ ctaSecondary }}" style-hover="{{ ctaSecondaryHover }}">加入清單</button>
-          <button onClick="{{ reset }}" style="{{ ghostBtn }}" style-hover="{{ navGhostHover }}">重置</button>
+          <button onClick="{{ exportQuote }}" style="{{ ctaPrimary }}" style-hover="{{ ctaPrimaryHover }}">{{ t.exportQuote }}</button>
+          <button onClick="{{ addToList }}" style="{{ ctaSecondary }}" style-hover="{{ ctaSecondaryHover }}">{{ t.addList }}</button>
+          <button onClick="{{ reset }}" style="{{ ghostBtn }}" style-hover="{{ navGhostHover }}">{{ t.reset }}</button>
         </div>
       </div>
     </div>
@@ -76,7 +81,7 @@
             <sc-if value="{{ carouselEmpty }}" hint-placeholder-val="{{ false }}">
               <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:#a1a1a6;">
                 <div style="width:116px;height:76px;border-radius:20px;border:2px dashed #cfcfd4;display:flex;align-items:center;justify-content:center;font-size:30px;">＋</div>
-                <span style="font-size:14px;">從右側選擇武器與裝備</span>
+                <span style="font-size:14px;">{{ t.sWeapons }}</span>
               </div>
             </sc-if>
 
@@ -87,7 +92,7 @@
                 </sc-if>
                 <sc-if value="{{ c.placeholder }}" hint-placeholder-val="{{ false }}">
                   <div style="width:100%;height:100%;border-radius:18px;background:repeating-linear-gradient(135deg,#fff,#fff 8px,#f1f1f4 8px,#f1f1f4 16px);border:1px solid #e2e2e7;display:flex;align-items:center;justify-content:center;">
-                    <span style="font:500 12px ui-monospace,monospace;color:#9a9aa0;text-align:center;padding:0 10px;">{{ c.name }}<br/>產品照</span>
+                    <span style="font:500 12px ui-monospace,monospace;color:#9a9aa0;text-align:center;padding:0 10px;">{{ c.name }}<br>產品照</span>
                   </div>
                 </sc-if>
               </div>
@@ -116,45 +121,65 @@
             <svg viewBox="0 0 680 400" preserveAspectRatio="xMidYMid slice" style="display:block;width:100%;height:360px;">
               <defs>
                 <radialGradient id="vh3" cx="50%" cy="40%" r="65%">
-                  <stop offset="0%" stop-color="{{ scene.bgIn }}"/>
-                  <stop offset="100%" stop-color="{{ scene.bgOut }}"/>
+                  <stop offset="0%" stop-color="{{ scene.bgIn }}"></stop>
+                  <stop offset="100%" stop-color="{{ scene.bgOut }}"></stop>
                 </radialGradient>
               </defs>
-              <rect x="0" y="0" width="680" height="400" fill="url(#vh3)"/>
-              <ellipse cx="340" cy="262" rx="{{ floor.shadowR }}" ry="{{ floor.shadowRy }}" fill="rgba(0,0,0,.05)"/>
-              <polygon points="{{ floor.points }}" fill="{{ floor.fill }}" stroke="#c7c7cc" stroke-width="1.5"/>
-              <polygon points="{{ floor.inner }}" fill="none" stroke="{{ floor.grid }}" stroke-width="1" stroke-dasharray="4 6"/>
+              <rect x="0" y="0" width="680" height="400" fill="url(#vh3)"></rect>
+              <sc-if value="{{ showSun }}" hint-placeholder-val="{{ false }}">
+                <circle cx="580" cy="78" r="34" fill="#ffe9a8"></circle>
+                <circle cx="580" cy="78" r="50" fill="#fff4cf" opacity="0.5"></circle>
+              </sc-if>
+              <sc-if value="{{ showGround }}" hint-placeholder-val="{{ false }}">
+                <rect x="0" y="300" width="680" height="100" fill="#cfe8b8" opacity="0.7"></rect>
+              </sc-if>
+              <ellipse cx="340" cy="262" rx="{{ floor.shadowR }}" ry="{{ floor.shadowRy }}" fill="rgba(0,0,0,.05)"></ellipse>
+              <polygon points="{{ floor.points }}" fill="{{ floor.fill }}" stroke="#c7c7cc" stroke-width="1.5"></polygon>
+              <sc-if value="{{ matFloor }}" hint-placeholder-val="{{ false }}">
+                <polygon points="{{ matFloor }}" fill="rgba(10,132,255,.1)" stroke="#0a84ff" stroke-width="1" stroke-opacity="0.4"></polygon>
+              </sc-if>
+              <polygon points="{{ floor.inner }}" fill="none" stroke="{{ floor.grid }}" stroke-width="1" stroke-dasharray="4 6"></polygon>
 
               <sc-for list="{{ floorDots }}" as="dt" hint-placeholder-count="0">
-                <circle cx="{{ dt.x }}" cy="{{ dt.y }}" r="3.4" fill="{{ scene.accent }}" opacity="0.9"/>
-                <circle cx="{{ dt.x }}" cy="{{ dt.y }}" r="6.5" fill="{{ scene.accent }}" opacity="0.18"/>
+                <circle cx="{{ dt.x }}" cy="{{ dt.y }}" r="3.4" fill="{{ scene.accent }}" opacity="0.9"></circle>
+                <circle cx="{{ dt.x }}" cy="{{ dt.y }}" r="6.5" fill="{{ scene.accent }}" opacity="0.18"></circle>
               </sc-for>
 
               <sc-if value="{{ showTruss }}" hint-placeholder-val="{{ false }}">
                 <g opacity="0.92">
-                  <rect x="{{ truss.x }}" y="{{ truss.y }}" width="{{ truss.w }}" height="7" rx="3" fill="#bcbcc2"/>
-                  <rect x="{{ truss.x }}" y="{{ truss.y2 }}" width="{{ truss.w }}" height="2" fill="#9a9aa0"/>
+                  <rect x="{{ truss.x }}" y="{{ truss.y }}" width="{{ truss.w }}" height="7" rx="3" fill="#bcbcc2"></rect>
+                  <rect x="{{ truss.x }}" y="{{ truss.y2 }}" width="{{ truss.w }}" height="2" fill="#9a9aa0"></rect>
                   <sc-for list="{{ trussCams }}" as="tc" hint-placeholder-count="0">
-                    <g transform="{{ tc.t }}"><rect x="-5" y="0" width="10" height="8" rx="2" fill="#6e6e73"/><circle cx="0" cy="4" r="2.4" fill="#1d1d1f"/><circle cx="0" cy="4" r="1" fill="#0a84ff"/></g>
+                    <g transform="{{ tc.t }}"><rect x="-5" y="0" width="10" height="8" rx="2" fill="#6e6e73"></rect><circle cx="0" cy="4" r="2.4" fill="#1d1d1f"></circle><circle cx="0" cy="4" r="1" fill="#0a84ff"></circle></g>
                   </sc-for>
                 </g>
               </sc-if>
 
               <sc-for list="{{ corners }}" as="cn" hint-placeholder-count="0">
                 <g transform="{{ cn.t }}">
-                  <line x1="0" y1="2" x2="0" y2="26" stroke="#c7c7cc" stroke-width="2"/>
-                  <rect x="-7" y="-9" width="14" height="12" rx="3" fill="#48484a"/>
-                  <circle cx="0" cy="-3" r="2.6" fill="#0a84ff"/>
+                  <line x1="0" y1="2" x2="0" y2="26" stroke="#c7c7cc" stroke-width="2"></line>
+                  <rect x="-7" y="-9" width="14" height="12" rx="3" fill="#48484a"></rect>
+                  <circle cx="0" cy="-3" r="2.6" fill="#0a84ff"></circle>
+                </g>
+              </sc-for>
+
+              <sc-for list="{{ stands }}" as="st" hint-placeholder-count="0">
+                <g transform="translate({{ st.x }},{{ st.y }})">
+                  <line x1="0" y1="-2" x2="-7" y2="6" stroke="#b0b0b6" stroke-width="2"></line>
+                  <line x1="0" y1="-2" x2="7" y2="6" stroke="#b0b0b6" stroke-width="2"></line>
+                  <line x1="0" y1="-2" x2="0" y2="-30" stroke="#9a9aa0" stroke-width="2.4"></line>
+                  <rect x="-7" y="-40" width="14" height="11" rx="3" fill="#48484a"></rect>
+                  <circle cx="0" cy="-34" r="2.6" fill="#0a84ff"></circle>
                 </g>
               </sc-for>
 
               <sc-for list="{{ figures }}" as="f" hint-placeholder-count="8">
                 <g transform="{{ f.t }}">
-                  <ellipse cx="0" cy="3" rx="9" ry="2.5" fill="rgba(0,0,0,.07)"/>
-                  <ellipse cx="0" cy="-50" rx="6.5" ry="7" fill="{{ f.fill }}"/>
-                  <path d="M-7,-42 Q0,-46 7,-42 L5,-18 L8,2 L3,2 L1,-16 L-1,-16 L-3,2 L-8,2 L-5,-18 Z" fill="{{ f.fill }}"/>
+                  <ellipse cx="0" cy="3" rx="9" ry="2.5" fill="rgba(0,0,0,.07)"></ellipse>
+                  <ellipse cx="0" cy="-50" rx="6.5" ry="7" fill="{{ f.fill }}"></ellipse>
+                  <path d="M-7,-42 Q0,-46 7,-42 L5,-18 L8,2 L3,2 L1,-16 L-1,-16 L-3,2 L-8,2 L-5,-18 Z" fill="{{ f.fill }}"></path>
                   <sc-if value="{{ f.armed }}" hint-placeholder-val="{{ false }}">
-                    <rect x="3" y="-35" width="23" height="3.2" rx="1.4" fill="#1d1d1f" transform="rotate(-6 3 -35)"/>
+                    <rect x="3" y="-35" width="23" height="3.2" rx="1.4" fill="#1d1d1f" transform="rotate(-6 3 -35)"></rect>
                   </sc-if>
                 </g>
               </sc-for>
@@ -176,7 +201,7 @@
         <!-- quick templates -->
         <sc-if value="{{ showTemplates }}" hint-placeholder-val="{{ true }}">
         <div style="margin-bottom:22px;">
-          <div style="font-size:13px;font-weight:700;margin-bottom:11px;">快速套用課程</div>
+          <div style="font-size:13px;font-weight:700;margin-bottom:11px;">{{ t.quick }}</div>
           <div class="noscroll" ref="{{ templateRowRef }}" style="display:flex;gap:9px;overflow-x:auto;padding-bottom:6px;margin:0 -4px;padding-left:4px;padding-right:4px;">
             <sc-for list="{{ templates }}" as="t" hint-placeholder-count="5">
               <button onClick="{{ t.onClick }}" style="{{ t.style }}" style-hover="{{ t.styleHover }}" style-active="{{ t.styleActive }}">
@@ -190,7 +215,7 @@
 
         <!-- ① scenario -->
         <div style="margin-bottom:24px;">
-          <div style="font-size:14px;font-weight:700;margin-bottom:12px;">應用情境</div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:12px;">{{ t.sApplication }}</div>
           <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
             <sc-for list="{{ scenarioCards }}" as="s" hint-placeholder-count="3">
               <button onClick="{{ s.onClick }}" style="{{ s.style }}" style-hover="{{ s.styleHover }}">
@@ -204,7 +229,7 @@
         <!-- ② weapons (above field) -->
         <div style="margin-bottom:24px;">
           <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:12px;">
-            <span style="font-size:14px;font-weight:700;">武器與裝備</span>
+            <span style="font-size:14px;font-weight:700;">{{ t.sWeapons }}</span>
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;">
             <sc-for list="{{ weaponChips }}" as="w" hint-placeholder-count="6">
@@ -216,10 +241,26 @@
           </div>
           <sc-if value="{{ showPistolType }}" hint-placeholder-val="{{ false }}">
             <div style="display:flex;align-items:center;gap:10px;margin-top:11px;padding:10px 13px;border:1px solid #ececf0;border-radius:16px;background:#f5f5f7;">
-              <span style="font-size:12.5px;color:#6e6e73;flex:none;">手槍類型</span>
+              <span style="font-size:12.5px;color:#6e6e73;flex:none;">{{ t.pistolType }}</span>
               <div style="display:flex;gap:7px;">
                 <sc-for list="{{ pistolTypes }}" as="pt" hint-placeholder-count="2">
                   <button onClick="{{ pt.onClick }}" style="{{ pt.style }}" style-hover="{{ pt.styleHover }}">{{ pt.label }}</button>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ hasWeapons }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:14px;">
+              <div style="font-size:12px;color:#6e6e73;margin-bottom:8px;">{{ t.qtyHint }}</div>
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <sc-for list="{{ weaponQtys }}" as="q" hint-placeholder-count="2">
+                  <div style="{{ q.rowStyle }}" style-hover="{{ q.rowHover }}">
+                    <span style="flex:1;min-width:0;font-size:13.5px;font-weight:500;">{{ q.name }}</span>
+                    <button onClick="{{ q.dec }}" style="{{ q.decStyle }}" style-hover="{{ q.stepHover }}">−</button>
+                    <input type="text" inputmode="numeric" value="{{ q.qty }}" onInput="{{ q.onInput }}" style="{{ q.inputStyle }}">
+                    <button onClick="{{ q.inc }}" style="{{ q.incStyle }}" style-hover="{{ q.stepHover }}">＋</button>
+                  </div>
                 </sc-for>
               </div>
             </div>
@@ -228,7 +269,7 @@
 
         <!-- ③ field -->
         <div style="margin-bottom:24px;">
-          <div style="font-size:14px;font-weight:700;margin-bottom:12px;">場地大小</div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:12px;">{{ t.sField }}</div>
           <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:9px;">
             <sc-for list="{{ fieldBtns }}" as="g" hint-placeholder-count="4">
               <button onClick="{{ g.onClick }}" style="{{ g.style }}" style-hover="{{ g.styleHover }}">
@@ -242,7 +283,7 @@
         <!-- ④ people -->
         <div style="margin-bottom:24px;">
           <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:12px;">
-            <span style="font-size:14px;font-weight:700;">同時受訓人數</span>
+            <span style="font-size:14px;font-weight:700;">{{ t.sPeople }}</span>
             <sc-if value="{{ peopleLimited }}" hint-placeholder-val="{{ false }}">
               <span style="font-size:11px;color:#e8590c;">{{ peopleNote }}</span>
             </sc-if>
@@ -256,8 +297,8 @@
 
         <!-- ⑤ site conditions (system auto-resolves the positioning solution) -->
         <div style="margin-bottom:6px;">
-          <div style="font-size:14px;font-weight:700;margin-bottom:3px;">場地條件</div>
-          <div style="font-size:11px;color:#6e6e73;margin-bottom:12px;">勾選現場狀況，系統自動推薦最合適的定位方案</div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:3px;">{{ t.sCond }}</div>
+          <div style="font-size:11px;color:#6e6e73;margin-bottom:12px;">{{ t.condHint }}</div>
           <div style="display:flex;flex-direction:column;gap:8px;">
             <sc-for list="{{ condRows }}" as="c" hint-placeholder-count="4">
               <button onClick="{{ c.onClick }}" style="{{ c.style }}" style-hover="{{ c.styleHover }}">
@@ -275,7 +316,7 @@
 
     <!-- ===== Details ===== -->
     <div style="margin-top:60px;">
-      <h2 style="font-size:13px;font-weight:700;letter-spacing:.4px;color:#6e6e73;text-transform:uppercase;margin:0 0 18px;">建議定位方案</h2>
+      <h2 style="font-size:13px;font-weight:700;letter-spacing:.4px;color:#6e6e73;text-transform:uppercase;margin:0 0 18px;">{{ t.kTrack }}</h2>
       <div style="border:1px solid #ececf0;border-radius:26px;padding:22px;background:#fff;display:flex;align-items:center;gap:22px;margin-bottom:48px;flex-wrap:wrap;">
         <div style="width:150px;height:118px;border-radius:18px;background:#f5f5f7;border:1px solid #ececf0;display:flex;align-items:center;justify-content:center;overflow:hidden;flex:none;">
           <sc-if value="{{ resolvedCard.img }}" hint-placeholder-val="{{ false }}">
@@ -288,11 +329,10 @@
         <div style="flex:1;min-width:220px;">
           <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-wrap:wrap;">
             <span style="font-size:20px;font-weight:700;letter-spacing:-.2px;">{{ resolvedCard.name }}</span>
-            <span style="font-size:11px;font-weight:600;color:#0071e3;background:#eaf2fe;padding:3px 9px;border-radius:8px;">系統推薦</span>
+            <span style="font-size:11px;font-weight:600;color:#0071e3;background:#eaf2fe;padding:3px 9px;border-radius:8px;">{{ resolvedCard.badge }}</span>
             <span style="font-size:11px;color:#6e6e73;border:1px solid #e2e2e7;padding:3px 9px;border-radius:8px;">{{ resolvedCard.build }}</span>
           </div>
           <div style="font-size:13.5px;color:#1d1d1f;line-height:1.5;margin-bottom:6px;">{{ resolvedCard.benefit }}</div>
-          <div style="font-size:12px;color:#6e6e73;line-height:1.5;">{{ resolvedCard.reason }}</div>
           <div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:11px;">
             <sc-for list="{{ resolvedCard.condTags }}" as="ct" hint-placeholder-count="2">
               <span style="font-size:11px;color:#3a3a3f;background:#f0f0f3;padding:4px 10px;border-radius:980px;">{{ ct }}</span>
@@ -301,17 +341,17 @@
         </div>
         <sc-if value="{{ resolvedCard.matActive }}" hint-placeholder-val="{{ false }}">
           <div style="flex:none;width:188px;border-left:1px solid #ececf0;padding-left:20px;">
-            <div style="font-size:11px;color:#6e6e73;margin-bottom:8px;">地墊鋪設示意</div>
+            <div style="font-size:11px;color:#6e6e73;margin-bottom:8px;">{{ t.matTitle }}</div>
             <div style="width:100%;height:96px;border-radius:14px;background:#1d2330;position:relative;overflow:hidden;border:1px solid #2a3242;">
               <div style="position:absolute;inset:14px;border-radius:8px;background-image:linear-gradient(#3a4a55 1px,transparent 1px),linear-gradient(90deg,#3a4a55 1px,transparent 1px);background-size:18px 18px;opacity:.55;"></div>
               <div style="position:absolute;left:50%;top:50%;width:13px;height:13px;border-radius:50%;transform:translate(-50%,-50%);background:#0a84ff;box-shadow:0 0 0 6px rgba(10,132,255,.22);"></div>
             </div>
-            <div style="font-size:11px;color:#6e6e73;line-height:1.4;margin-top:8px;">於地面鋪設定位燈條／燈點，現場需可施作</div>
+            <div style="font-size:11px;color:#6e6e73;line-height:1.4;margin-top:8px;">{{ t.matDesc }}</div>
           </div>
         </sc-if>
       </div>
 
-      <h2 style="font-size:13px;font-weight:700;letter-spacing:.4px;color:#6e6e73;text-transform:uppercase;margin:0 0 18px;">方案內容</h2>
+      <h2 style="font-size:13px;font-weight:700;letter-spacing:.4px;color:#6e6e73;text-transform:uppercase;margin:0 0 18px;">{{ t.sPackage }}</h2>
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;">
         <sc-for list="{{ bom }}" as="b" hint-placeholder-count="4">
           <div style="border:1px solid #ececf0;border-radius:26px;padding:20px;background:#fff;transition:all .18s ease;" style-hover="{{ bomHover }}">
@@ -332,7 +372,7 @@
         </sc-for>
       </div>
 
-      <h2 style="font-size:13px;font-weight:700;letter-spacing:.4px;color:#6e6e73;text-transform:uppercase;margin:44px 0 18px;">規格摘要</h2>
+      <h2 style="font-size:13px;font-weight:700;letter-spacing:.4px;color:#6e6e73;text-transform:uppercase;margin:44px 0 18px;">{{ t.sSpec }}</h2>
       <div style="border:1px solid #ececf0;border-radius:26px;overflow:hidden;">
         <sc-for list="{{ specs }}" as="s" hint-placeholder-count="5">
           <div style="{{ s.rowStyle }}">
@@ -361,12 +401,29 @@ class Component extends DCLogic {
     dragDX: 0,
     toast: '',
     pistolType: 'electric',
-    // 場地條件（系統依此自動選出最優定位方案，使用者不需懂技術）
-    condBuild: true,    // 可施工架設（固定設備 / 桁架 / 基站）
-    condMat: true,      // 可鋪設地墊 / 地面裝置
-    condOutdoor: false, // 室外或強光干擾
-    condMobile: false,  // 需移動 / 非固定場館（快速布置收拾）
+    lang: 'zh',         // zh / en / ja
+    // 現場條件（系統依此篩選並推薦定位方案，使用者不需懂技術）
+    condTruss: true,    // 場地可架上方桁架
+    condMat: true,      // 場地可鋪地墊 / 地面燈條
+    condOutdoor: false, // 室外 · 強光（窗多 / 日照）
+    condLowLight: false,// 照明不足
+    condMobile: false,  // 需移動 / 非固定場館
+    condSupply: false,  // 供應鏈限制（避中國大陸）
+    trackOverride: null,// 使用者點選的備選定位（null = 用推薦）
+    qty: {},            // 各武器數量（未設＝採預設）
   };
+
+  setLang = (code) => this.setState({ lang: code });
+  // 取目前語系字典
+  L() { return this.I18N[this.state.lang] || this.I18N.zh; }
+  // 依語系取多語名稱：obj.name / obj.name_en / obj.name_ja
+  nm(obj, base) {
+    base = base || 'name';
+    const lang = this.state.lang;
+    if (lang === 'en') return obj[base + '_en'] || obj[base];
+    if (lang === 'ja') return obj[base + '_ja'] || obj[base];
+    return obj[base];
+  }
 
   // horizontal wheel-scroll for the quick-template row
   templateRowRef = (el) => {
@@ -386,38 +443,41 @@ class Component extends DCLogic {
   ACCD = '#0077ed';
 
   scenariosData = [
-    { id: 'police', name: '警勤模擬', desc: '射擊與警用裝備多人協同' },
-    { id: 'military', name: '軍事模擬', desc: 'AI 合成化戰場 · CQB' },
-    { id: 'fire', name: '消防模擬', desc: '滅火、救援與災害應變' },
+    { id: 'police', name: '警勤模擬', name_en: 'Police Training', name_ja: '警察訓練', desc: '射擊與警用裝備多人協同', desc_en: 'Shooting & police-gear team drills', desc_ja: '射撃・警察装備の多人数連携' },
+    { id: 'military', name: '軍事模擬', name_en: 'Military Training', name_ja: '軍事訓練', desc: 'AI 合成化戰場 · CQB', desc_en: 'AI synthetic battlefield · CQB', desc_ja: 'AI合成戦場・CQB' },
+    { id: 'fire', name: '消防模擬', name_en: 'Firefighting Training', name_ja: '消防訓練', desc: '滅火、救援與災害應變', desc_en: 'Firefighting, rescue & disaster response', desc_ja: '消火・救助・災害対応' },
   ];
 
   weaponsData = [
     { id: '手槍', name: '手槍', price: 80000, sc: ['police', 'military'], img: 'assets/w-pistol.png', imgScale: 0.7 },
     { id: '步槍', name: '步槍', price: 100000, sc: ['police', 'military'], img: 'assets/w-rifle.png' },
-    { id: '警棍', name: '警棍', price: 50000, sc: ['police'], img: null },
+    { id: '警棍', name: '警棍', price: 50000, sc: ['police'], img: 'assets/w-baton.png' },
     { id: '電擊槍', name: '電擊槍', price: 60000, sc: ['police'], img: null },
-    { id: '辣椒水罐', name: '辣椒水罐', price: 40000, sc: ['police'], img: null },
+    { id: '辣椒水罐', name: '辣椒水罐', price: 40000, sc: ['police'], img: 'assets/w-pepper.png', imgScale: 0.7 },
     { id: '衝鋒槍', name: '衝鋒槍', price: 100000, sc: ['military'], img: 'assets/w-smg.png' },
     { id: '機槍', name: '機槍', price: 150000, sc: ['military'], img: 'assets/w-mg.png' },
     { id: '狙擊槍', name: '狙擊槍', price: 120000, sc: ['military'], img: 'assets/w-sniper.png' },
-    { id: '榴彈槍', name: '榴彈槍', price: 150000, sc: ['military'], img: null },
+    { id: '榴彈槍', name: '榴彈槍', price: 150000, sc: ['military'], img: 'assets/w-grenade.png' },
     { id: '飛彈/火箭', name: '飛彈/火箭發射器', price: 300000, sc: ['military'], img: 'assets/w-missile.png' },
-    { id: '無人機', name: '無人機', price: 200000, sc: ['military', 'fire'], img: null },
-    { id: '悍馬車', name: '載具 · 悍馬車', price: 500000, sc: ['military'], img: null },
-    { id: '快艇', name: '載具 · 快艇', price: 500000, sc: ['military'], img: null },
+    { id: '無人機', name: '無人機', price: 200000, sc: ['military', 'fire'], img: 'assets/w-drone.png' },
+    { id: '悍馬車', name: '載具 · 悍馬車', price: 500000, sc: ['military'], img: 'assets/w-humvee.png' },
+    { id: '快艇', name: '載具 · 快艇', price: 500000, sc: ['military'], img: 'assets/w-boat.png' },
     { id: '戰車', name: '載具 · 戰車', price: 500000, sc: ['military'], img: null },
-    { id: '滅火器', name: '滅火器', price: 80000, sc: ['fire'], img: null },
+    { id: '滅火器', name: '滅火器', price: 80000, sc: ['fire'], img: 'assets/w-extinguisher.png', imgScale: 0.75 },
     { id: '噴水槍', name: '噴水槍', price: 70000, sc: ['fire'], img: null },
   ];
 
   trackingData = [
-    { id: 'antilatency', name: 'Antilatency', fields: ['small', 'medium', 'large', 'xlarge'], build: '需施工', perPerson: 60000, base: 200000, benefit: '大場域可擴展、抗遮擋', needsBuild: true, usesMat: true, optical: false },
-    { id: 'optitrack', name: 'OptiTrack', fields: ['large', 'xlarge'], build: '需施工', perPerson: 150000, base: 800000, benefit: '精度最高、適合大場域', needsBuild: true, usesMat: false, optical: true },
-    { id: 'ultimate', name: 'Ultimate Tracker', fields: ['small', 'medium'], build: '免施工', perPerson: 50000, base: 0, benefit: '免布置、可攜、快速部署', needsBuild: false, usesMat: false, optical: false },
-    { id: 'wrist', name: 'Wrist Tracker', fields: ['small', 'medium'], build: '免施工', perPerson: 45000, base: 0, benefit: '免布置、輕便', needsBuild: false, usesMat: false, optical: false },
-    { id: 'sensoryx', name: 'Sensoryx', fields: ['small', 'medium'], build: '免施工', perPerson: 55000, base: 0, benefit: '體積更小、免布置', needsBuild: false, usesMat: false, optical: false },
-    { id: 'vive', name: 'Vive Tracker', fields: ['small'], build: '需基站', perPerson: 40000, base: 100000, benefit: '平價高精度、適合小空間', needsBuild: true, usesMat: false, optical: true },
+    { id: 'antilatency', name: 'Antilatency', fields: ['small', 'medium', 'large', 'xlarge'], build: '需施工', perPerson: 60000, base: 200000, benefit: '大場域可擴展、抗遮擋', needsBuild: true, reqMat: true, reqTruss: false, optical: false, china: false },
+    { id: 'optitrack', name: 'OptiTrack', fields: ['large', 'xlarge'], build: '需施工', perPerson: 150000, base: 800000, benefit: '精度最高、適合大場域', needsBuild: true, reqMat: false, reqTruss: true, optical: true, china: false },
+    { id: 'ultimate', name: 'Ultimate Tracker', fields: ['small', 'medium'], build: '免施工', perPerson: 50000, base: 0, benefit: '免布置、可攜、快速部署', needsBuild: false, reqMat: false, reqTruss: false, optical: false, china: false },
+    { id: 'wrist', name: 'Wrist Tracker', fields: ['small', 'medium'], build: '免施工', perPerson: 45000, base: 0, benefit: '免布置、輕便', needsBuild: false, reqMat: false, reqTruss: false, optical: false, china: false },
+    { id: 'sensoryx', name: 'Sensoryx', fields: ['small', 'medium'], build: '免施工', perPerson: 55000, base: 0, benefit: '體積更小、免布置', needsBuild: false, reqMat: false, reqTruss: false, optical: false, china: false },
+    { id: 'vive', name: 'Vive Tracker', fields: ['small'], build: '需基站', perPerson: 40000, base: 100000, benefit: '平價高精度、適合小空間', needsBuild: true, reqMat: false, reqTruss: false, optical: true, china: false },
   ];
+
+  // 與人數連動的武器（預設數量＝人數代表值）
+  LINKED_WEAPONS = ['手槍', '步槍', '警棍', '電擊槍', '辣椒水罐'];
 
   fieldsData = [
     { id: 'small', name: '小型', range: '< 36 ㎡', rep: 25 },
@@ -437,6 +497,61 @@ class Component extends DCLogic {
 
   HELMET = 30000;
 
+  // ---------- 三語字典（產品專有名詞維持原文）----------
+  I18N = {
+    zh: {
+      brandSub: 'XR 模擬訓練 · 方案配置器', estPrice: '方案總價', exportQuote: '匯出報價', addList: '加入清單', reset: '重置',
+      quick: '快速套用課程', sApplication: '應用情境', sWeapons: '武器與裝備', sQuantity: '數量',
+      sPeople: '同時受訓人數', sField: '場地大小', sCond: '現場條件', sPackage: '方案內容', sSpec: '規格摘要', sTrackResult: '定位方案',
+      condHint: '勾選現場狀況，系統自動為你配置最合適的方案', qtyHint: '數量', matTitle: '地面定位布置', matDesc: '於地面布置定位裝置，現場需可施作',
+      altHint: '其他符合條件的方案（可點選切換，報價與場景同步更新）',
+      pistolType: '手槍類型', electric: '電動', gas: '瓦斯', linked: '隨人數', recommended: '推薦', inUse: '使用中',
+      badgeRec: '系統推薦', badgeAlt: '已選備選', badgeNear: '最接近', perFrom: '起', mountTruss: '上方桁架', mountFloor: '落地支架',
+      cTruss: '可架上方桁架', cTrussD: '可於上方固定環場相機', cMat: '可鋪地墊／燈條', cMatD: '允許在地面鋪設定位裝置',
+      cOutdoor: '室外 · 強光', cOutdoorD: '窗戶多、日光強或光源干擾大', cLowLight: '照明不足', cLowLightD: '現場偏暗、光線不足',
+      cMobile: '需移動（非固定場館）', cMobileD: '非固定場館、需換點使用', cSupply: '供應鏈限制', cSupplyD: '需避開特定產地（中國大陸）',
+      cNone: '一般室內', headline: '打造你的模擬訓練系統',
+      kField: '場地條件', kTrack: '建議定位方案', kWeapon: '武器配置', kPeople: '受訓人數', kScene: '應用情境', kFieldSize: '場地大小',
+      none: '尚未選擇', helmet: 'Focus Vision 頭盔', trackDev: '定位設備', build: '場域施工建置',
+      perPerson: '每位受訓人員配戴', perTrack: '每人一組追蹤配置', subtotal: '小計', withDiscount: '（含量大折扣）',
+      simSuffix: '模擬', people: '人', fieldSuffix: '場地', exportToast: '報價已匹出', addToast: '已加入方案清單',
+    },
+    en: {
+      brandSub: 'XR Simulation · Solution Configurator', estPrice: 'Total', exportQuote: 'Export Quote', addList: 'Add to List', reset: 'Reset',
+      quick: 'Quick Presets', sApplication: 'Application', sWeapons: 'Weapons & Equipment', sQuantity: 'Quantity',
+      sPeople: 'Trainees', sField: 'Field Size', sCond: 'Site Conditions', sPackage: 'Package Contents', sSpec: 'Spec Summary', sTrackResult: 'Positioning',
+      condHint: 'Check your site conditions and the system configures the best solution for you', qtyHint: 'Quantity', matTitle: 'Floor positioning layout', matDesc: 'Positioning devices laid on the floor; site must allow installation',
+      altHint: 'Other matching solutions (tap to switch — price & scene update live)',
+      pistolType: 'Pistol type', electric: 'Electric', gas: 'Gas', linked: 'per trainee', recommended: 'Recommended', inUse: 'In use',
+      badgeRec: 'Recommended', badgeAlt: 'Alternative', badgeNear: 'Closest', perFrom: 'from', mountTruss: 'Overhead truss', mountFloor: 'Floor stand',
+      cTruss: 'Overhead truss mountable', cTrussD: 'Cameras can be fixed overhead', cMat: 'Floor mats allowed', cMatD: 'Floor-laid positioning devices permitted',
+      cOutdoor: 'Outdoor / Bright light', cOutdoorD: 'Many windows, strong daylight or glare', cLowLight: 'Low light', cLowLightD: 'Dim site, insufficient lighting',
+      cMobile: 'Mobile (non-permanent)', cMobileD: 'Non-permanent venue, needs relocation', cSupply: 'Supply chain restriction', cSupplyD: 'Avoid specific origin (mainland China)',
+      cNone: 'Standard indoor', headline: 'Build Your Simulation Training System',
+      kField: 'Site conditions', kTrack: 'Recommended positioning', kWeapon: 'Weapons', kPeople: 'Trainees', kScene: 'Application', kFieldSize: 'Field size',
+      none: 'None selected', helmet: 'Focus Vision Headset', trackDev: 'positioning device', build: 'On-site installation',
+      perPerson: 'Worn by each trainee', perTrack: 'One tracking set per person', subtotal: 'Subtotal', withDiscount: ' (volume discount)',
+      simSuffix: ' Simulation', people: 'ppl', fieldSuffix: ' field', exportToast: 'Quote exported', addToast: 'Added to your list',
+    },
+    ja: {
+      brandSub: 'XRシミュレーション · ソリューション構成ツール', estPrice: '方案合計', exportQuote: '見積書を出力', addList: 'リストに追加', reset: 'リセット',
+      quick: 'クイック適用', sApplication: '用途', sWeapons: '武器・装備', sQuantity: '数量',
+      sPeople: '同時訓練人数', sField: '施設サイズ', sCond: '現場条件', sPackage: '構成内容', sSpec: '仕様概要', sTrackResult: '位置測定',
+      condHint: '現場状況を選ぶと、最適な構成を自動でご提案します', qtyHint: '数量', matTitle: '床面の位置測定レイアウト', matDesc: '床面に測定機器を設置（施工可能な現場が必要）',
+      altHint: '他の適合方式（タップで切替——価格とシーンが即時更新）',
+      pistolType: '拳銃タイプ', electric: '電動', gas: 'ガス', linked: '人数連動', recommended: 'おすすめ', inUse: '使用中',
+      badgeRec: 'おすすめ', badgeAlt: '代替案', badgeNear: '最も近い', perFrom: '～', mountTruss: '上部トラス', mountFloor: 'フロアスタンド',
+      cTruss: '上部トラス設置可', cTrussD: '上部にカメラを固定可能', cMat: 'フロアマット可', cMatD: '床面への測定機器設置可',
+      cOutdoor: '屋外・強光', cOutdoorD: '窓が多い・日光や光の干渉が強い', cLowLight: '照明不足', cLowLightD: '現場が暗い・光量不足',
+      cMobile: '移動式（非常設）', cMobileD: '非常設会場・移設が必要', cSupply: 'サプライチェーン制限', cSupplyD: '特定産地（中国本土）を回避',
+      cNone: '一般屋内', headline: 'シミュレーション訓練システムを構築',
+      kField: '現場条件', kTrack: '推奨位置測定', kWeapon: '武器構成', kPeople: '訓練人数', kScene: '用途', kFieldSize: '施設サイズ',
+      none: '未選択', helmet: 'Focus Vision ヘッドセット', trackDev: '位置測定機器', build: '現場設置工事',
+      perPerson: '訓練者ごとに装着', perTrack: '1人1セットのトラッキング', subtotal: '小計', withDiscount: '（まとめ割引込み）',
+      simSuffix: 'シミュレーション', people: '人', fieldSuffix: '施設', exportToast: '見積書を出力しました', addToast: 'リストに追加しました',
+    },
+  };
+
   DEV_IMG = { antilatency: 'assets/dev-antilatency.png', optitrack: 'assets/dev-optitrack.png', ultimate: 'assets/dev-ultimate.png', sensoryx: 'assets/dev-sensoryx.png', vive: 'assets/dev-vive.png', wrist: 'assets/dev-wrist.png' };
 
   templatesData = [
@@ -451,8 +566,20 @@ class Component extends DCLogic {
 
   // ---------- helpers ----------
   fmt(n) { return n.toLocaleString('en-US'); }
-  pistolSuffix() { return this.state.pistolType === 'gas' ? '（瓦斯）' : '（電動）'; }
-  wName(w) { return w && w.id === '手槍' ? w.name + this.pistolSuffix() : (w ? w.name : ''); }
+  pistolSuffix() {
+    const L = this.L();
+    return this.state.pistolType === 'gas' ? '（' + L.gas + '）' : '（' + L.electric + '）';
+  }
+  wTrans(id) {
+    const lang = this.state.lang;
+    if (lang === 'zh') return id;
+    const map = {
+      en: { '手槍': 'Pistol', '步槍': 'Rifle', '警棍': 'Baton', '電擊槍': 'Taser', '辣椒水罐': 'Pepper Spray', '衝鋒槍': 'SMG', '機槍': 'Machine Gun', '狙擊槍': 'Sniper Rifle', '榴彈槍': 'Grenade Launcher', '飛彈/火箭發射器': 'Missile/Rocket Launcher', '無人機': 'Drone', '悍馬車': 'Humvee', '快艇': 'Speedboat', '戰車': 'Tank', '滅火器': 'Fire Extinguisher', '噴水槍': 'Water Cannon' },
+      ja: { '手槍': '拳銃', '步槍': 'ライフル', '警棍': '警棒', '電擊槍': 'スタンガン', '辣椒水罐': '催涙スプレー', '衝鋒槍': 'サブマシンガン', '機槍': '機関銃', '狙擊槍': 'スナイパーライフル', '榴彈槍': 'グレネードランチャー', '飛彈/火箭發射器': 'ミサイル/ロケット', '無人機': 'ドローン', '悍馬車': 'ハンヴィー', '快艇': 'ボート', '戰車': '戦車', '滅火器': '消火器', '噴水槍': '放水銃' },
+    };
+    return (map[lang] && map[lang][id]) || id;
+  }
+  wName(w) { if (!w) return ''; const base = this.wTrans(w.id); return w.id === '手槍' ? base + this.pistolSuffix() : base; }
   selectedWeapons() {
     return this.state.weapons
       .map(id => this.weaponsData.find(w => w.id === id))
@@ -476,10 +603,9 @@ class Component extends DCLogic {
   // tracking availability = field allowed ∩ people allowed (Antilatency 不支援 25–40)
   trackAvail(t, field, peopleId) {
     if (!t || !t.fields.includes(field)) return false;
-    if (t.id === 'antilatency') {
-      const idx = this.peopleTiers.findIndex(p => p.id === (peopleId || this.state.people));
-      if (idx >= 5) return false; // 25–40 人
-    }
+    const idx = this.peopleTiers.findIndex(p => p.id === (peopleId || this.state.people));
+    if (t.id === 'antilatency' && idx >= 5) return false; // 不支援 25–40 人
+    if (t.id === 'wrist' && idx > 1) return false;          // Wrist 僅 1～4 人
     return true;
   }
   disabledReason(t, peopleId) {
@@ -494,28 +620,74 @@ class Component extends DCLogic {
   firstAvailable(field, peopleId) { const a = this.trackingData.find(t => this.trackAvail(t, field, peopleId)); return a ? a.id : 'optitrack'; }
 
   // ---------- auto-resolve positioning from site conditions ----------
-  cond() { return { build: this.state.condBuild, mat: this.state.condMat, outdoor: this.state.condOutdoor, mobile: this.state.condMobile }; }
+  cond() {
+    const s = this.state;
+    return { truss: s.condTruss, mat: s.condMat, outdoor: s.condOutdoor, lowLight: s.condLowLight, mobile: s.condMobile, supply: s.condSupply };
+  }
+  // OptiTrack 安裝方式：'truss'（上方桁架）/ 'floor'（落地支架，較便宜）/ null（不可用）
+  optiMount(field, c) {
+    if (field !== 'large' && field !== 'xlarge') return null; // 僅大型以上
+    if (c.truss) return 'truss';                              // 可架桁架 → 上方桁架
+    if (field === 'large') return 'floor';                    // 大型且不可架桁架 → 落地支架
+    return null;                                              // 超大型且不可架桁架 → 排除
+  }
+  // 安裝方式調整後的成本（落地支架 7 折）
+  trackRates(t, field, c) {
+    if (t.id === 'optitrack' && this.optiMount(field, c) === 'floor') {
+      return { base: Math.round(t.base * 0.7), per: Math.round(t.perPerson * 0.7) };
+    }
+    return { base: t.base, per: t.perPerson };
+  }
   feasibleTracks(field, peopleId, c) {
     return this.trackingData.filter(t => {
       if (!this.trackAvail(t, field, peopleId)) return false;
-      if (!c.build && t.needsBuild) return false;   // 不能施工 → 排除需固定安裝
-      if (!c.mat && t.usesMat) return false;         // 不能鋪地墊 → 排除地面燈條
-      if (c.outdoor && t.optical) return false;       // 室外強光 → 排除光學/紅外
-      if (c.mobile && t.needsBuild) return false;     // 需移動 → 只留免施工可攜
+      if (t.id === 'optitrack') { if (!this.optiMount(field, c)) return false; } // OptiTrack 落地/桁架規則
+      else if (t.reqTruss && !c.truss) return false;           // 其他需架桁架但現場不可
+      if (t.reqMat && !c.mat) return false;                    // 需鋪地墊但現場不可
+      if (t.optical && c.outdoor) return false;                // 室外強光 → 排除光學/紅外
+      if (t.needsBuild && c.mobile) return false;              // 需移動 → 只留免施工
+      if (t.china && c.supply) return false;                   // 供應鏈限制
       return true;
     });
   }
+  costOf(t, rep, field, c) { const r = this.trackRates(t, field || this.state.field, c || this.cond()); return r.base + r.per * rep; }
   resolveTracking(field, peopleId, c) {
     const rep = (this.peopleTiers.find(p => p.id === peopleId) || { rep: 8 }).rep;
-    let list = this.feasibleTracks(field, peopleId, c);
-    const exact = list.length > 0;
-    if (!list.length) list = this.trackingData.filter(t => this.trackAvail(t, field, peopleId));
+    const feasible = this.feasibleTracks(field, peopleId, c)
+      .slice().sort((a, b) => this.costOf(a, rep, field, c) - this.costOf(b, rep, field, c));
+    const exact = feasible.length > 0;
+    let list = feasible;
+    if (!list.length) list = this.trackingData.filter(t => this.trackAvail(t, field, peopleId) && (t.id !== 'optitrack' || this.optiMount(field, c))).slice().sort((a, b) => this.costOf(a, rep, field, c) - this.costOf(b, rep, field, c));
     if (!list.length) list = this.trackingData.filter(t => t.fields.includes(field));
-    const cost = t => t.base + t.perPerson * rep;
-    list = list.slice().sort((a, b) => cost(a) - cost(b)); // 多方案符合 → 取成本最低
-    return { track: list[0] || this.trackingData[0], exact, count: this.feasibleTracks(field, peopleId, c).length };
+    const recommended = list[0] || this.trackingData[0];
+    // 使用者點選的備選（須仍在可行清單內），否則用推薦
+    const ovr = this.state.trackOverride && list.find(t => t.id === this.state.trackOverride);
+    const active = ovr || recommended;
+    return { track: active, recommended, list, exact, count: feasible.length };
   }
-  toggleCond = (key) => { const k = 'cond' + key; this.setState({ [k]: !this.state[k] }); };
+  toggleCond = (key) => { const k = 'cond' + key; this.setState({ [k]: !this.state[k], trackOverride: null }); };
+  setTrack = (id) => { this.setState({ trackOverride: id }); };
+
+  // ---------- weapon quantities + volume discount ----------
+  qtyOf(id, rep) {
+    const q = this.state.qty[id];
+    if (q != null) return q;
+    return this.LINKED_WEAPONS.includes(id) ? rep : 1;
+  }
+  setQty(id, val) {
+    const v = Math.max(1, Math.min(999, Math.round(val) || 1));
+    this.setState({ qty: Object.assign({}, this.state.qty, { [id]: v }) });
+  }
+  bumpQty(id, rep, delta) { this.setQty(id, this.qtyOf(id, rep) + delta); }
+  // 量大折扣：第1把100%、2–5把70%、6–15把50%、16+把30%
+  weaponCost(price, n) {
+    let total = 0;
+    for (let i = 1; i <= n; i++) {
+      const f = i === 1 ? 1 : i <= 5 ? 0.7 : i <= 15 ? 0.5 : 0.3;
+      total += price * f;
+    }
+    return Math.round(total);
+  }
 
   // ---------- mutations ----------
   setScenario(id) {
@@ -531,7 +703,7 @@ class Component extends DCLogic {
       if (!has) { const sel = this.selectedWeapons(); const idx = sel.findIndex(s => s.id === id); if (idx >= 0) this.setState({ center: idx }); }
     });
   }
-  setPeople(id) { this.setState({ people: id }); }
+  setPeople(id) { this.setState({ people: id, trackOverride: null }); }
   removeCenter = () => { const sel = this.selectedWeapons(); const t = sel[this.centerIndex()]; if (t) this.toggleWeapon(t.id); };
   prev = () => this.setState({ center: this.state.center - 1 });
   next = () => this.setState({ center: this.state.center + 1 });
@@ -539,13 +711,13 @@ class Component extends DCLogic {
 
   setField(id) {
     const people = this.fixPeople(this.state.weapons, this.state.people, id);
-    this.setState({ field: id, people });
+    this.setState({ field: id, people, trackOverride: null });
   }
   applyTemplate(t) {
     const people = this.fixPeople(t.weapons, t.people, t.field);
-    this.setState({ scenario: t.scenario, field: t.field, people, weapons: [...t.weapons], center: 0 });
+    this.setState({ scenario: t.scenario, field: t.field, people, weapons: [...t.weapons], center: 0, trackOverride: null, qty: {} });
   }
-  reset = () => this.setState({ scenario: 'police', weapons: ['手槍', '步槍'], field: 'medium', people: 'p8', center: 1, condBuild: true, condMat: true, condOutdoor: false, condMobile: false });
+  reset = () => this.setState({ scenario: 'police', weapons: ['手槍', '步槍'], field: 'medium', people: 'p8', center: 1, condTruss: true, condMat: true, condOutdoor: false, condLowLight: false, condMobile: false, condQuick: false, condSupply: false, trackOverride: null, qty: {} });
 
   // ---------- infinite drag ----------
   onDragStart = (e) => {
@@ -572,14 +744,24 @@ class Component extends DCLogic {
     const trans = 'all .18s ease';
     const lift = (bg) => ({ background: bg || BG2, borderColor: '#b5b5bb', transform: 'translateY(-2px)', boxShadow: '0 6px 18px rgba(0,0,0,.09)' });
 
+    const T = this.L();
+    const lang = this.state.lang;
+    const fMap = { zh: { small: '小型', medium: '中型', large: '大型', xlarge: '超大型' }, en: { small: 'Small', medium: 'Medium', large: 'Large', xlarge: 'Extra Large' }, ja: { small: '小型', medium: '中型', large: '大型', xlarge: '特大型' } };
+    const scMap = { zh: { police: '警勤', military: '軍事', fire: '消防' }, en: { police: 'Police', military: 'Military', fire: 'Firefighting' }, ja: { police: '警察', military: '軍事', fire: '消防' } };
+    const wMap = {
+      en: { '手槍': 'Pistol', '步槍': 'Rifle', '警棍': 'Baton', '電擊槍': 'Taser', '辣椒水罐': 'Pepper Spray', '衝鋒槍': 'SMG', '機槍': 'Machine Gun', '狙擊槍': 'Sniper Rifle', '榴彈槍': 'Grenade Launcher', '飛彈/火箭發射器': 'Missile/Rocket Launcher', '無人機': 'Drone', '悍馬車': 'Humvee', '快艇': 'Speedboat', '戰車': 'Tank', '滅火器': 'Fire Extinguisher', '噴水槍': 'Water Cannon' },
+      ja: { '手槍': '拳銃', '步槍': 'ライフル', '警棍': '警棒', '電擊槍': 'スタンガン', '辣椒水罐': '催涙スプレー', '衝鋒槍': 'サブマシンガン', '機槍': '機関銃', '狙擊槍': 'スナイパーライフル', '榴彈槍': 'グレネードランチャー', '飛彈/火箭發射器': 'ミサイル/ロケット', '無人機': 'ドローン', '悍馬車': 'ハンヴィー', '快艇': 'ボート', '戰車': '戦車', '滅火器': '消火器', '噴水槍': '放水銃' },
+    };
+    const wTr = (id) => (lang === 'zh' ? id : (wMap[lang][id] || id));
+
     const { scenario, weapons, field } = this.state;
     const fieldObj = this.fieldsData.find(f => f.id === field);
     const hasExt = weapons.includes('滅火器');
     const pCap = this.peopleCapIdx(weapons, field);
     const availTiers = this.peopleTiers.filter((p, i) => i <= pCap);
     const peopleId = this.fixPeople(weapons, this.state.people, field);
-    const fName = { small: '小型', medium: '中型', large: '大型', xlarge: '超大型' }[field];
-    const peopleNote = hasExt ? '滅火器限 1–4 人' : (this.fieldCapIdx(field) < 5 ? (fName + '場地上限 ' + this.peopleTiers[this.fieldCapIdx(field)].label + ' 人') : '');
+    const fName = fMap[lang][field];
+    const peopleNote = hasExt ? (lang === 'zh' ? '滅火器限 1–4 人' : lang === 'ja' ? '消火器は1～4人' : 'Extinguisher: 1–4 only') : (this.fieldCapIdx(field) < 5 ? (fName + ' ' + (lang === 'zh' ? '場地上限 ' : lang === 'ja' ? '上限 ' : 'max ') + this.peopleTiers[this.fieldCapIdx(field)].label + ' ' + T.people) : '');
     const tier = this.peopleTiers.find(p => p.id === peopleId) || this.peopleTiers[2];
     const rep = tier.rep;
     // ---- auto-resolve positioning from site conditions (user never picks the brand) ----
@@ -589,8 +771,13 @@ class Component extends DCLogic {
     const needsBuild = trackObj.build !== '免施工';
     const sel = this.selectedWeapons();
 
-    const weaponSum = sel.reduce((s, w) => s + w.price, 0);
-    const total = (this.HELMET + trackObj.perPerson) * rep + trackObj.base + weaponSum;
+    const weaponSum = sel.reduce((s, w) => s + this.weaponCost(w.price, this.qtyOf(w.id, rep)), 0);
+    const trackRate = this.trackRates(trackObj, field, cnd);
+    const optiMount = this.optiMount(field, cnd); // 'truss' | 'floor' | null
+    const total = (this.HELMET + trackRate.per) * rep + trackRate.base + weaponSum;
+    // 方案顯示名稱（OptiTrack 標註安裝方式）
+    const Tt = this.L();
+    const trackName = (t) => t.name + (t.id === 'optitrack' && this.optiMount(field, cnd) ? '（' + (this.optiMount(field, cnd) === 'floor' ? Tt.mountFloor : Tt.mountTruss) + '）' : '');
 
     // ===== infinite carousel =====
     const N = sel.length;
@@ -611,7 +798,7 @@ class Component extends DCLogic {
       const z = 100 + Math.round(front * 200);
       const isFront = Math.abs(this.norm(i - frac, N)) < 0.5;
       return {
-        img: w.img, name: w.name, placeholder: !w.img,
+        img: w.img, name: this.wTrans(w.id), placeholder: !w.img,
         imgStyle: w.img ? { width: '100%', height: '100%', backgroundImage: 'url("' + w.img + '")', backgroundSize: (w.imgScale ? Math.round(w.imgScale * 100) + '%' : 'contain'), backgroundRepeat: 'no-repeat', backgroundPosition: 'center', filter: 'drop-shadow(0 14px 18px rgba(0,0,0,.18))' } : null,
         onClick: () => this.goCard(i),
         wrap: {
@@ -637,7 +824,7 @@ class Component extends DCLogic {
     const scenarioCards = this.scenariosData.map(s => {
       const selF = s.id === scenario;
       return {
-        name: s.name, desc: s.desc, onClick: () => this.setScenario(s.id),
+        name: this.nm(s), desc: this.nm(s, 'desc'), onClick: () => this.setScenario(s.id),
         style: Object.assign({ fontFamily: 'inherit', cursor: 'pointer', transition: trans, borderRadius: '18px', display: 'flex', flexDirection: 'column', gap: '5px', alignItems: 'flex-start', textAlign: 'left', padding: '13px' },
           selF ? { border: '1.5px solid ' + ACC, background: SELBG } : { border: '1px solid ' + LINE, background: '#fff' }),
         styleHover: selF ? { transform: 'translateY(-2px)', boxShadow: '0 6px 18px rgba(0,0,0,.09)' } : lift(),
@@ -648,10 +835,31 @@ class Component extends DCLogic {
     const weaponChips = this.weaponsData.filter(w => w.sc.includes(scenario)).map(w => {
       const selF = weapons.includes(w.id);
       return {
-        name: w.name, onClick: () => this.toggleWeapon(w.id),
+        name: this.wTrans(w.id), onClick: () => this.toggleWeapon(w.id),
         style: segBase(selF, { display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 10px', fontSize: '12.5px', fontWeight: selF ? 500 : 400, borderRadius: '16px' }),
         styleHover: selF ? { background: ACC + '1f', transform: 'translateY(-2px)', boxShadow: '0 6px 16px rgba(0,0,0,.08)' } : lift(),
         dot: { width: '14px', height: '14px', borderRadius: '5px', flex: 'none', display: 'inline-block', border: selF ? 'none' : '1.5px solid ' + LINE, background: selF ? ACC : '#fff', boxShadow: selF ? 'inset 0 0 0 2px #fff, inset 0 0 0 3px ' + ACC : 'none' },
+      };
+    });
+
+    // selected weapons with quantity steppers
+    const stepBtn = { fontFamily: 'inherit', cursor: 'pointer', transition: trans, width: '30px', height: '30px', borderRadius: '10px', border: '1px solid ' + LINE, background: '#fff', color: TEXT, fontSize: '17px', lineHeight: '1', display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 'none' };
+    const weaponQtys = sel.map(w => {
+      const n = this.qtyOf(w.id, rep);
+      const linked = this.LINKED_WEAPONS.includes(w.id) && this.state.qty[w.id] == null;
+      return {
+        id: w.id, name: this.wName(w), qty: n, linked,
+        subtotalText: 'NT$ ' + this.fmt(this.weaponCost(w.price, n)),
+        unitText: (lang === 'zh' ? '單把 NT$ ' : lang === 'ja' ? '1丁 NT$ ' : 'Unit NT$ ') + this.fmt(w.price),
+        dec: () => this.bumpQty(w.id, rep, -1),
+        inc: () => this.bumpQty(w.id, rep, 1),
+        onInput: (e) => this.setQty(w.id, parseInt((e.target.value || '').replace(/[^0-9]/g, ''), 10)),
+        rowStyle: { display: 'flex', alignItems: 'center', gap: '12px', padding: '11px 14px', borderRadius: '16px', border: '1px solid ' + LINE, background: '#fff', transition: trans },
+        rowHover: { borderColor: '#b5b5bb', transform: 'translateY(-2px)', boxShadow: '0 6px 16px rgba(0,0,0,.07)' },
+        decStyle: stepBtn, incStyle: stepBtn,
+        stepHover: { background: '#f5f5f7', borderColor: '#b5b5bb' },
+        inputStyle: { width: '46px', textAlign: 'center', fontFamily: 'inherit', fontSize: '14px', fontWeight: 600, border: '1px solid ' + LINE, borderRadius: '9px', padding: '6px 2px', color: TEXT, MozAppearance: 'textfield' },
+        linkTag: { fontSize: '10px', fontWeight: 500, padding: '2px 7px', borderRadius: '7px', color: ACC, background: '#eaf2fe', whiteSpace: 'nowrap' },
       };
     });
 
@@ -676,10 +884,12 @@ class Component extends DCLogic {
 
     // ===== site conditions (replaces manual positioning picker) =====
     const condDefs = [
-      { key: 'Build', on: cnd.build, title: '現場可施工架設', desc: '可固定安裝設備、桁架或基站' },
-      { key: 'Mat', on: cnd.mat, title: '地面可鋪設地墊／燈條', desc: '允許在地面鋪設定位裝置' },
-      { key: 'Outdoor', on: cnd.outdoor, title: '室外或強光環境', desc: '窗戶多、日光強或光源干擾大' },
-      { key: 'Mobile', on: cnd.mobile, title: '需移動／非固定場館', desc: '需快速布置與收拾（約 1 小時內）' },
+      { key: 'Truss', on: cnd.truss, title: T.cTruss, desc: T.cTrussD },
+      { key: 'Mat', on: cnd.mat, title: T.cMat, desc: T.cMatD },
+      { key: 'Outdoor', on: cnd.outdoor, title: T.cOutdoor, desc: T.cOutdoorD },
+      { key: 'LowLight', on: cnd.lowLight, title: T.cLowLight, desc: T.cLowLightD },
+      { key: 'Mobile', on: cnd.mobile, title: T.cMobile, desc: T.cMobileD },
+      { key: 'Supply', on: cnd.supply, title: T.cSupply, desc: T.cSupplyD },
     ];
     const condRows = condDefs.map(c => ({
       title: c.title, desc: c.desc, on: c.on, onClick: () => this.toggleCond(c.key),
@@ -690,30 +900,55 @@ class Component extends DCLogic {
       switchKnob: { position: 'absolute', top: '2px', left: c.on ? '18px' : '2px', width: '20px', height: '20px', borderRadius: '50%', background: '#fff', transition: 'left .2s ease', boxShadow: '0 1px 3px rgba(0,0,0,.25)' },
     }));
 
-    // resolved positioning solution (shown in content area, not chosen by user)
-    const matActive = cnd.mat && trackObj.usesMat;
+    // resolved positioning solution (recommended + alternatives, shown in content area)
+    const matActive = cnd.mat && trackObj.reqMat;
+    const devBg = (id) => this.DEV_IMG[id] ? { width: '100%', height: '100%', backgroundImage: 'url("' + this.DEV_IMG[id] + '")', backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center' } : null;
     const condTags = [];
-    if (cnd.build) condTags.push('可施工'); else condTags.push('不可施工');
-    if (cnd.mat) condTags.push('可鋪地墊'); else condTags.push('不可鋪地墊');
-    if (cnd.outdoor) condTags.push('室外/強光');
-    if (cnd.mobile) condTags.push('需移動');
+    if (cnd.truss) condTags.push(T.cTruss);
+    if (cnd.mat) condTags.push(T.cMat);
+    if (cnd.outdoor) condTags.push(T.cOutdoor);
+    if (cnd.lowLight) condTags.push(T.cLowLight);
+    if (cnd.mobile) condTags.push(T.cMobile);
+    if (cnd.supply) condTags.push(T.cSupply);
+    if (!condTags.length) condTags.push(T.cNone);
+    const isOverride = this.state.trackOverride && trackObj.id === this.state.trackOverride && trackObj.id !== resolved.recommended.id;
+    const altList = resolved.list.map(t => {
+      const isActive = t.id === trackObj.id;
+      const isRec = t.id === resolved.recommended.id;
+      return {
+        id: t.id, name: trackName(t), build: t.build, benefit: t.benefit,
+        isRec, isActive,
+        costText: 'NT$ ' + this.fmt(this.costOf(t, rep, field, cnd)) + ' ' + T.perFrom,
+        img: this.DEV_IMG[t.id] || null, placeholder: !this.DEV_IMG[t.id], imgStyle: devBg(t.id),
+        onClick: () => this.setTrack(t.id),
+        cardStyle: Object.assign({ fontFamily: 'inherit', cursor: 'pointer', transition: trans, borderRadius: '20px', padding: '14px', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '8px', width: '100%' },
+          isActive ? { border: '1.5px solid ' + ACC, background: SELBG } : { border: '1px solid ' + LINE, background: '#fff' }),
+        cardHover: isActive ? { background: ACC + '14' } : lift('#fff'),
+        recTag: { fontSize: '10px', fontWeight: 600, padding: '2px 8px', borderRadius: '8px', color: '#fff', background: ACC },
+        activeTag: { fontSize: '10px', fontWeight: 600, padding: '2px 8px', borderRadius: '8px', color: ACC, background: '#eaf2fe' },
+      };
+    });
     const resolvedCard = {
-      name: trackObj.name,
+      name: trackName(trackObj),
       build: trackObj.build,
       benefit: trackObj.benefit,
       img: this.DEV_IMG[trackObj.id] || null,
-      imgStyle: this.DEV_IMG[trackObj.id] ? { width: '100%', height: '100%', backgroundImage: 'url("' + this.DEV_IMG[trackObj.id] + '")', backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center' } : null,
+      imgStyle: devBg(trackObj.id),
       exact: resolved.exact,
-      reason: resolved.exact ? ('依據場地條件，' + (resolved.count > 1 ? '符合的方案中採用成本最低者' : '為唯一符合的方案')) : '目前條件無完全符合方案，已建議最接近的方案，請與技術單位確認',
-      condTags,
-      matActive,
+      isOverride,
+      reason: !resolved.exact ? (lang === 'zh' ? '目前條件無完全符合方案，已建議最接近的方案，請與技術單位評估' : lang === 'ja' ? '現在の条件に完全一致する方式がないため、最も近い方式を提案しています' : 'No exact match for current conditions; showing the closest option — please confirm with our technical team')
+            : isOverride ? (lang === 'zh' ? '您選擇的備選方案；點其他卡片可切換回推薦' : lang === 'ja' ? '選択した代替案；他のカードで推奨に戻れます' : 'Your selected alternative; tap another card to return to the recommendation')
+            : (lang === 'zh' ? ('系統推薦：' + (resolved.count > 1 ? '符合條件的 ' + resolved.count + ' 個方案中，成本最低者' : '目前唯一符合條件的方案')) : lang === 'ja' ? ('システム推奨：' + (resolved.count > 1 ? '適合 ' + resolved.count + ' 案のうち最安価' : '現在唯一の適合案')) : ('Recommended: ' + (resolved.count > 1 ? 'lowest cost of ' + resolved.count + ' matching options' : 'the only matching option'))),
+      condTags, matActive, altList,
+      showAlts: altList.length > 1,
+      badge: !resolved.exact ? T.badgeNear : isOverride ? T.badgeAlt : T.badgeRec,
     };
 
     const tName = (id) => this.fieldsData.find(f => f.id === id).name;
-    const scName = (id) => ({ police: '警勤', military: '軍事', fire: '消防' })[id];
+    const scName = (id) => scMap[lang][id];
     const pLabel = (id) => this.peopleTiers.find(p => p.id === id).label;
     const templates = this.templatesData.map(t => ({
-      name: t.name, meta: scName(t.scenario) + ' · ' + pLabel(t.people) + ' 人 · ' + tName(t.field),
+      name: this.nm(t), meta: scName(t.scenario) + ' · ' + pLabel(t.people) + ' ' + T.people + ' · ' + fMap[lang][t.field],
       onClick: () => this.applyTemplate(t),
       style: { fontFamily: 'inherit', cursor: 'pointer', transition: 'all .12s ease', display: 'flex', flexDirection: 'column', gap: '3px', alignItems: 'flex-start', padding: '11px 14px', borderRadius: '18px', border: '1px solid ' + LINE, background: '#fff', flex: 'none' },
       styleHover: { borderColor: '#b5b5bb', transform: 'translateY(-2px)', boxShadow: '0 6px 18px rgba(0,0,0,.09)' },
@@ -724,19 +959,19 @@ class Component extends DCLogic {
     const devImgStyle = (src) => ({ width: '88%', height: '82%', backgroundImage: 'url("' + src + '")', backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center' });
     const trackImg = this.DEV_IMG[trackObj.id];
     const bom = [
-      { name: 'Focus Vision 頭盔', qty: '× ' + rep, note: '每位受訓人員配戴', glyph: null, glyphColor: ACC, boxBg: '#fff', img: 'assets/dev-helmet.png', imgStyle: devImgStyle('assets/dev-helmet.png') },
-      { name: trackObj.name + ' 定位設備', qty: '× ' + rep, note: '每人一組追蹤配置', glyph: trackImg ? null : '◎', glyphColor: ACC, boxBg: '#fff', img: trackImg, imgStyle: trackImg ? devImgStyle(trackImg) : null },
+      { name: T.helmet, qty: '× ' + rep, note: T.perPerson, glyph: null, glyphColor: ACC, boxBg: '#fff', img: 'assets/dev-helmet.png', imgStyle: devImgStyle('assets/dev-helmet.png') },
+      { name: trackName(trackObj) + ' ' + T.trackDev, qty: '× ' + rep, note: T.perTrack, glyph: trackImg ? null : '◎', glyphColor: ACC, boxBg: '#fff', img: trackImg, imgStyle: trackImg ? devImgStyle(trackImg) : null },
     ];
-    if (needsBuild) bom.push({ name: '場域施工建置', qty: '× 1', note: trackObj.build + '（' + fieldObj.name + '場地）', glyph: '⚒', glyphColor: ACC, boxBg: BG2, img: null });
-    sel.forEach(w => bom.push({ name: this.wName(w), qty: '× 1', note: '武器開發製作 · NT$ ' + this.fmt(w.price), glyph: w.img ? null : '◆', glyphColor: ACC, boxBg: w.img ? '#fff' : BG2, img: w.img, imgStyle: w.img ? { width: '90%', height: '80%', backgroundImage: 'url("' + w.img + '")', backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center' } : null }));
+    if (needsBuild) bom.push({ name: T.build, qty: '× 1', note: trackObj.build + '（' + fName + '）', glyph: '⚒', glyphColor: ACC, boxBg: BG2, img: null });
+    sel.forEach(w => { const n = this.qtyOf(w.id, rep); bom.push({ name: this.wName(w), qty: '× ' + n, note: '', glyph: w.img ? null : '◆', glyphColor: ACC, boxBg: w.img ? '#fff' : BG2, img: w.img, imgStyle: w.img ? { width: '90%', height: '80%', backgroundImage: 'url("' + w.img + '")', backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center' } : null }); });
 
     // ===== specs =====
     const specRows = [
-      ['場地級距', fieldObj.name + '（' + fieldObj.range + '，代表 ' + fieldObj.rep + ' ㎡）'],
-      ['同時受訓人數', tier.label + ' 人（估算 ' + rep + ' 人）'],
-      ['場地條件', condTags.join('、')],
-      ['建議定位方案', trackObj.name],
-      ['武器配置', sel.length ? sel.map(w => this.wName(w)).join('、') : '尚未選擇'],
+      [T.kFieldSize, fName + '（' + fieldObj.range + '・' + fieldObj.rep + ' ㎡）'],
+      [T.kPeople, tier.label + ' ' + T.people + '（~' + rep + ' ' + T.people + '）'],
+      [T.kField, condTags.join(lang === 'zh' ? '、' : ', ')],
+      [T.kTrack, trackName(trackObj)],
+      [T.kWeapon, sel.length ? sel.map(w => this.wName(w)).join(lang === 'zh' ? '、' : ', ') : T.none],
     ];
     const specs = specRows.map((r, i) => ({
       k: r[0], v: r[1],
@@ -766,7 +1001,17 @@ class Component extends DCLogic {
     const iw = w * 0.8, id = d * 0.8;
     const itop = [cx, cy - id], iright = [cx + iw, cy], ibottom = [cx, cy + id], ileft = [cx - iw, cy];
     const innerPoints = [pt(itop[0], itop[1]), pt(iright[0], iright[1]), pt(ibottom[0], ibottom[1]), pt(ileft[0], ileft[1])].join(' ');
-    const figFill = '#3a4a63', floorFill = '#eef1f6', gridCol = '#cdd5e0';
+    // environment palette driven by site conditions
+    let env = 'indoor';
+    if (cnd.outdoor) env = 'outdoor';
+    else if (cnd.lowLight) env = 'dark';
+    const ENV = {
+      indoor:  { bgIn: '#ffffff', bgOut: '#eef1f5', floorFill: '#eef1f6', gridCol: '#cdd5e0', figFill: '#3a4a63', summaryCol: '#6e6e73' },
+      outdoor: { bgIn: '#cdecff', bgOut: '#eaf7e8', floorFill: '#e7f1e3', gridCol: '#bcd6b7', figFill: '#37485f', summaryCol: '#6e6e73' },
+      dark:    { bgIn: '#31353f', bgOut: '#1b1e25', floorFill: '#39414f', gridCol: '#525b6b', figFill: '#d4dbe6', summaryCol: '#9aa0ad' },
+    };
+    const envP = ENV[env];
+    const figFill = envP.figFill, floorFill = envP.floorFill, gridCol = envP.gridCol;
     const armed = weapons.length > 0;
 
     const maxFig = 24;
@@ -788,19 +1033,25 @@ class Component extends DCLogic {
     const overflowText = rep > count ? '＋ 另 ' + (rep - count) + ' 人（共 ' + rep + ' 人）' : '';
 
     const lerp = (p, q, t) => [p[0] + (q[0] - p[0]) * t, p[1] + (q[1] - p[1]) * t];
-    let floorDots = [], corners = [], showTruss = false, trussCams = [], truss = { x: 0, y: 0, y2: 0, w: 0 };
+    let floorDots = [], corners = [], showTruss = false, trussCams = [], truss = { x: 0, y: 0, y2: 0, w: 0 }, stands = [];
+    // 上方桁架：勾「可架桁架」或 OptiTrack 桁架安裝時顯示
+    if (cnd.truss || optiMount === 'truss') {
+      showTruss = true;
+      truss = { x: cx - w * 0.82, y: cy - d - 44, y2: cy - d - 39, w: w * 1.64 };
+      const camN = optiMount === 'truss' ? 5 : 3;
+      for (let k = 0; k < camN; k++) { const x = truss.x + (truss.w / (camN - 1)) * k; trussCams.push({ t: 'translate(' + x.toFixed(1) + ',' + (truss.y + 6).toFixed(1) + ')' }); }
+    }
     if (trackObj.id === 'antilatency') {
       const edges = [[ileft, itop], [itop, iright], [iright, ibottom], [ibottom, ileft]];
       edges.forEach(([p, q]) => [0.22, 0.5, 0.78].forEach(t => { const pos = lerp(p, q, t); floorDots.push({ x: pos[0].toFixed(1), y: pos[1].toFixed(1) }); }));
-    } else if (trackObj.id === 'optitrack') {
-      showTruss = true;
-      truss = { x: cx - w * 0.82, y: cy - d - 44, y2: cy - d - 39, w: w * 1.64 };
-      for (let k = 0; k < 5; k++) { const x = truss.x + (truss.w / 4) * k; trussCams.push({ t: 'translate(' + x.toFixed(1) + ',' + (truss.y + 6).toFixed(1) + ')' }); }
+    } else if (trackObj.id === 'optitrack' && optiMount === 'floor') {
+      // 落地支架：四周角落擺放腳架相機（取代吊掛桁架）
+      [itop, iright, ibottom, ileft].forEach(p => stands.push({ x: p[0].toFixed(1), y: p[1].toFixed(1) }));
     } else if (trackObj.id === 'vive') {
       [ileft, iright].forEach(p => corners.push({ t: 'translate(' + p[0].toFixed(1) + ',' + (p[1] - 14).toFixed(1) + ')' }));
     }
 
-    const summary = scName(scenario) + '模擬　·　' + tier.label + ' 人　·　' + fieldObj.name + '場地 (' + fieldObj.rep + '㎡)　·　' + trackObj.name;
+    const summary = scName(scenario) + T.simSuffix + '　·　' + tier.label + ' ' + T.people + '　·　' + fName + ' (' + fieldObj.rep + '㎡)　·　' + trackName(trackObj);
 
     // chrome
     const ctaP = { fontFamily: 'inherit', fontSize: '13px', fontWeight: 500, color: '#fff', background: ACC, border: '1px solid ' + ACC, padding: '9px 16px', borderRadius: '980px', cursor: 'pointer', transition: trans };
@@ -813,6 +1064,7 @@ class Component extends DCLogic {
       templates, scenarioCards, weaponChips, peopleBtns, fieldBtns, condRows, resolvedCard,
       templateRowRef: this.templateRowRef,
       showPistolType: weapons.includes('手槍'), pistolTypes,
+      weaponQtys, hasWeapons: sel.length > 0,
       resolvedNoImg: !resolvedCard.img,
       peopleLimited: !!peopleNote, peopleNote,
       carouselCards, carouselEmpty: N === 0, showArrows: N > 1,
@@ -820,14 +1072,23 @@ class Component extends DCLogic {
       weaponCount: N + ' 項',
       bom, specs,
       priceText: 'NT$ ' + this.fmt(total),
-      summary, sceneKey: scenario + '-' + field + '-' + peopleId + '-' + this.state.tracking,
-      scene: { accent: ACC, bgIn: '#ffffff', bgOut: '#eef1f5' },
+      summary, sceneKey: [scenario, field, peopleId, trackObj.id, optiMount, env, cnd.mat, cnd.truss, cnd.mobile, cnd.supply, lang].join('-'),
+      scene: { accent: ACC, bgIn: envP.bgIn, bgOut: envP.bgOut },
+      env, showSun: env === 'outdoor', showGround: env === 'outdoor',
+      matFloor: cnd.mat ? innerPoints : null,
       floor: { points: floorPoints, inner: innerPoints, fill: floorFill, grid: gridCol, shadowR: (w * 0.92).toFixed(1), shadowRy: (d * 0.82).toFixed(1) },
-      figures, floorDots, corners, showTruss, truss, trussCams, overflowText,
+      figures, floorDots, corners, showTruss, truss, trussCams, stands, overflowText,
+      t: T, langBtns: ['zh', 'en', 'ja'].map(code => ({
+        code, label: { zh: '繁中', en: 'EN', ja: '日本語' }[code], active: lang === code,
+        onClick: () => this.setLang(code),
+        style: Object.assign({ fontFamily: 'inherit', cursor: 'pointer', transition: trans, fontSize: '12px', fontWeight: 500, padding: '5px 11px', borderRadius: '980px', border: 'none', whiteSpace: 'nowrap' },
+          lang === code ? { background: '#fff', color: TEXT, boxShadow: '0 1px 3px rgba(0,0,0,.12)' } : { background: 'transparent', color: '#6e6e73' }),
+        styleHover: lang === code ? {} : { color: TEXT },
+      })),
       toast: this.state.toast,
       reset: this.reset, prev: this.prev, next: this.next, removeCenter: this.removeCenter, onDragStart: this.onDragStart,
-      exportQuote: () => this.showToast('已產生報價文件（示意）— ' + this.fmt(total) + ' 元'),
-      addToList: () => this.showToast('已加入方案清單'),
+      exportQuote: () => this.showToast(T.exportToast + ' — NT$ ' + this.fmt(total)),
+      addToList: () => this.showToast(T.addToast),
       ctaPrimary: ctaP, ctaPrimaryHover: { background: ACCD, transform: 'translateY(-1px)', boxShadow: '0 6px 16px rgba(0,113,227,.28)' },
       ctaSecondary: ctaS, ctaSecondaryHover: lift('#f5f5f7'),
       ghostBtn: ghost, navGhostHover: { background: '#f5f5f7', color: '#1d1d1f' },
